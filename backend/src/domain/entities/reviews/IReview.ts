@@ -10,7 +10,7 @@ export interface IReview {
     id: string;
     vendorId: string;
     customerId: string;
-    orderId: string;
+    orderId: string | null;
     rating: 1 | 2 | 3 | 4 | 5;
     comment: string | null;
     images: string[];

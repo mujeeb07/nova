@@ -1,6 +1,5 @@
 import nodemailer from "nodemailer";
 
-
 export const sendOtpEmail = async (email: string, otp: string) => {
     const user = process.env.MAIL_USER;
     const pass = process.env.MAIL_PASSWORD;

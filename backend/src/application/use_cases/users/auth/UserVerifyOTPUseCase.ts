@@ -2,6 +2,8 @@ import type { IUserRepository } from "../../../../domain/repositories/users/IUse
 import type { IKeyValueRepository } from "../../../../domain/repositories/key_value/IOtpRepository";
 import { IUserVerifyOtpUseCase } from "../../../interfaces/users/IUserUseCase";
 import { UserVerifyOtpInputDTO } from "../../../dtos/users/user.dto";
+import { BadRequestError, ConflictError } from "../../../../utils/errors";
+
 
 export class UserVerifyOtpUseCase implements IUserVerifyOtpUseCase {
     constructor(
@@ -15,28 +17,30 @@ export class UserVerifyOtpUseCase implements IUserVerifyOtpUseCase {
         console.log("Input:", input);
         console.log(email);
 
-        const cachedOtp = await this._keyValueRepository.get(`otp:register:user:${email}`);
-        console.log(cachedOtp);
-
+        let userData = await this._keyValueRepository.get(`otp:register:user:${email}`) as any;
+     
+        if(userData){
+            userData = JSON.parse(userData)
+        }
         const userInputOtp = otp;
 
         console.log(userInputOtp, "input");
-
-        if(!cachedOtp || cachedOtp !== userInputOtp) {
-            throw new Error("Invalid or expired OTP");
+        console.log(userData,userInputOtp,"hereeeeeeeeeeee")
+        if(!userData || userData.otp !== userInputOtp) {
+            throw new BadRequestError("Invalid or expired OTP");
         }
 
         const existing = await this._userRepository.findByEmail(email);
-        console.log("Existing:", existing)
+        console.log("Existing:", existing);
         if(existing) {
-            await this._keyValueRepository.del(cachedOtp);
-            throw new Error("An account with this email already exists, please login!");
+            await this._keyValueRepository.del(`otp:register:user:${email}`);
+            throw new ConflictError("An account with this email already exists, please login!");
         }
-        const userData = await this._keyValueRepository.get(`pending:register:user:${email}`);
+      
         console.log("user data at the redis: ",userData)
-        if(!userData) throw new Error("user data not available");
+        if(!userData) throw new BadRequestError("user data not available");
 
-        const savedUser = JSON.parse(userData);
+        const savedUser = userData;
         console.log(savedUser);
 
         await this._userRepository.create({...savedUser, passwordHash:savedUser.password, isVerified: true, phone: null});

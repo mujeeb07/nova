@@ -2,10 +2,11 @@ import { BaseRepository } from "../shared/BaseRepository";
 import { IUserRepository } from "../../../domain/repositories/users/IUserRepository";
 import { IUser } from "../../../domain/entities/users/IUser";
 import { IUserDocument, UserModel } from "./model/userModel";
+import { IPasswordResettable } from "../../../domain/repositories/shared/IPasswordResettable";
 
 export class UserRepository 
-    extends BaseRepository<IUser, IUserDocument>
-    implements IUserRepository
+extends BaseRepository<IUser, IUserDocument> 
+implements IUserRepository, IPasswordResettable
 {
     constructor() {
         super(UserModel, (raw: any): IUser => ({
@@ -32,5 +33,16 @@ export class UserRepository
         console.log("DOC:",doc)
         if(!doc) return null;
         return this.mapper(doc);
+    }
+
+    // forgot password.
+    async findAccountByEmail(email: string): Promise<string | null> {
+        const doc = await UserModel.findOne({ email }).select("_id");
+        return doc ? doc._id.toString() : null
+    }
+
+    // reset-password.
+    async updatePasswordHash(accountId: string, passwordHash: string): Promise<void> {
+        await UserModel.updateOne({ accountId }, { $set: { passwordHash } });
     }
 }

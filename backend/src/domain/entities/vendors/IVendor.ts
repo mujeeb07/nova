@@ -26,6 +26,15 @@ export interface IWorkingHours {
 export type VendorStatus = "pending" | "active" | "suspended" | "rejected";
 export type VerificationStatus = "unsubmitted" | "under_review" | "verified" | "rejected";
 
+export type IRatingDistribution = Record< 1 | 2 | 3 | 4 | 5, number >;
+
+export interface IVendorRatingSummary {
+    average: number;
+    totalReviews: number;
+    sumOfRatings: number;
+    distribution: IRatingDistribution;
+}
+
 export interface IVendor {
     id: string;
     shopName: string;
@@ -35,12 +44,17 @@ export interface IVendor {
     shopImages: string[];
     addresses: IAddress[];
     serviceIds: string[];
-    workingHours: IWorkingHours;
+    workingHours: IWorkingHours | null;
     dailyOrderCapacity: number;
     currentSubscriptionId: string | null;
     status: VendorStatus;
     verificationStatus: VerificationStatus;
+    verificationDocuments: string[];
+    rejectionReason: string | null;
+    reviewedBy: string | null;
+    reviewedAt: Date | null;
     isFeatured: boolean;
+    ratingSummary: IVendorRatingSummary;
     createdAt: Date;
     updatedAt: Date;
 }
@@ -62,20 +76,9 @@ export interface IBankDetails {
     upiId?: string;
 }
 
-
 export interface IVendorPayoutAccount {
     vendorId: string;
     bankDetails: IBankDetails;
     commissionRate: number;
     pendingSettlementAmount: number;
-}
-
-export type IRatingDistribution = Record<1 | 2 | 3 | 4 | 5, number>;
-
-/** Denormalised read model, rebuilt from reviews. */
-export interface IVendorRatingSummary {
-    vendorId: string;
-    average: number;
-    totalReviews: number;
-    distribution: IRatingDistribution;
 }

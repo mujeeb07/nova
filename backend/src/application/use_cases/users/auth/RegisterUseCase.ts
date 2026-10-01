@@ -6,6 +6,7 @@ import { IPasswordService } from "../../../services/IPasswordService";
 import { generateOtp } from "../../../../utils/generateOtp";
 import { sendOtpEmail } from "../../../../infrastructure/services/otp_service";
 import { OTP_CONFIG } from "../../../../config/otp_config";
+import { BadRequestError, ConflictError } from "../../../../utils/errors";
 
 export class UserRegisterUseCase implements IUserRegisterUseCase {
     constructor(
@@ -15,22 +16,24 @@ export class UserRegisterUseCase implements IUserRegisterUseCase {
     ) {};
 
     async execute({ name, email, password }: UserRegisterInputDTO ): Promise<void> {
-        if(!password) throw new Error("Password is required");
+        if(!name || !email || !password) throw new BadRequestError("All fields are required");
 
         const existing = await this._userRepository.findByEmail(email);
 
-        if(existing?.status) throw new Error("conflict, user already exist. please login");
+        if(existing?.status) throw new ConflictError("conflict, user already exist. please login");
 
         const hashed = await this._passwordService.hash(password); 
         const otp = generateOtp();
         const TTL_SECONDS = Math.floor(OTP_CONFIG.EXPIRY_MS / 1000);
 
-
         const pendingUserData = { name, email, password: hashed };
         console.log("user data redis:",pendingUserData)
         // saving the user metadata into redis
-        await this._keyValueService.set(`otp:register:user:${email}`, otp, 3600);
-        await this._keyValueService.set(`pending:register:user:${email}`, JSON.stringify(pendingUserData), 3600);
+        await this._keyValueService.set(
+            `otp:register:user:${email}`,
+            JSON.stringify({ ...pendingUserData, otp }),
+            TTL_SECONDS
+        );
 
         try {
             await sendOtpEmail(email, otp);

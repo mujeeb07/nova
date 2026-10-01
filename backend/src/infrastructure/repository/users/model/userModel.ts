@@ -66,7 +66,7 @@ const addressSchema = new Schema<IAddress>(
         }
     }, 
     {
-        _id: false
+        _id: true
     }
 );
 
@@ -107,7 +107,6 @@ const userSchema = new Schema<IUserDocument>(
 
         phone: {
             type: String,
-            // required: true,
             unique: true,
             trim: true
         },

@@ -42,6 +42,7 @@ export default tseslint.config(
     rules: {
       '@typescript-eslint/no-unused-vars': 'warn',
       'no-console': 'off',
+      "@typescript-eslint/no-explicit-any": "warn",
       // Validates that all modern module paths match actual file locations
       'import-x/no-unresolved': 'error',
     },
