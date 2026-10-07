@@ -1,5 +1,8 @@
+export type AccountRole = "vendor" | "user" | "SUPER_ADMIN";
+
 export interface ITokenPayload {
-    vendorId: string;
+    accountId: string;
+    role: AccountRole;
 }
 
 export interface ITokenService {

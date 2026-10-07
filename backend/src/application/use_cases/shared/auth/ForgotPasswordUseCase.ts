@@ -9,7 +9,7 @@ export class ForgotPasswordUseCase {
         private _resettableRepository: IPasswordResettable,
         private _keyValueService: IKeyValueRepository,
         private _sendOtpEmail: (email: string, otp: string) => Promise<void>,
-        private _chacheKeyPrefix: string
+        private _cacheKeyPrefix: string
     ){};
 
     async execute(email: string): Promise<void> {
@@ -19,7 +19,7 @@ export class ForgotPasswordUseCase {
         const otp = generateOtp();
         const ttlSeconds = Math.floor(OTP_CONFIG.EXPIRY_MS / 1000);
 
-        await this._keyValueService.set(`${this._chacheKeyPrefix}:${email}`, otp, ttlSeconds);
+        await this._keyValueService.set(`${this._cacheKeyPrefix}:${email}`, otp, ttlSeconds);
         await this._sendOtpEmail(email, otp);
         
     }

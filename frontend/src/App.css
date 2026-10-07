@@ -1,3 +1,33 @@
+/* 1. Import Google Fonts */
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Plus+Jakarta+Sans:wght@500;600;700;800&display=swap');
+
+/* 2. Import Tailwind CSS v4 */
+@import "tailwindcss";
+
+/* 3. Configure Theme Variables (Replaces tailwind.config.js) */
+@theme {
+  --font-sans: 'Inter', sans-serif;
+  --font-heading: 'Plus Jakarta Sans', sans-serif;
+
+  --color-nova-blue: #2563eb;
+  --color-nova-emerald: #065f46;
+  --color-nova-indigo: #524be3;
+}
+
+/* 4. Base Styles & Typography Defaults */
+@layer base {
+  body {
+    font-family: var(--font-sans);
+    background-color: #f8fafc;
+    color: #1e293b;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  h1, h2, h3, h4, h5, h6 {
+    font-family: var(--font-heading);
+  }
+}
+
 .counter {
   font-size: 16px;
   padding: 5px 10px;

@@ -28,7 +28,7 @@ export class UserRegisterUseCase implements IUserRegisterUseCase {
 
         const pendingUserData = { name, email, password: hashed };
         console.log("user data redis:",pendingUserData)
-        // saving the user metadata into redis
+        // saving the user metadata into redis.
         await this._keyValueService.set(
             `otp:register:user:${email}`,
             JSON.stringify({ ...pendingUserData, otp }),

@@ -8,6 +8,6 @@ const adminRepository = new AdminRepository();
 const loginAdminUseCase = new LoginAdminUseCase(adminRepository);
 const adminController = new AdminController(loginAdminUseCase);
 
-adminRouter.post("/login", (req, res) => adminController.login(req, res));
+adminRouter.post("/login",adminController.login);
 
 export { adminRouter };

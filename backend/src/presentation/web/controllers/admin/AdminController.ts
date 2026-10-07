@@ -4,7 +4,6 @@ import { ILoginAdminUseCase } from "../../../../application/interfaces/admin/ILo
 import { asyncHandlor } from "../../../../utils/errors/asyncHandlor";
 import { sendSuccess } from "../../../../utils/apiResponse";
 import { BadRequestError } from "../../../../utils/errors";
-import { HttpStatus } from "../../../../utils/httpStatus";
 
 export class AdminController {
     constructor(private _loginAdminUsecase: ILoginAdminUseCase){}

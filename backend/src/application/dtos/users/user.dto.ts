@@ -50,7 +50,8 @@ export interface UserForgotPasswordInpnutDTO { // forgot password input.
 export interface UserResetPasswordInputDTO { // reset password input.
     email: string;
     otp: string;
-    password: string;
+    oldPassword: string;
+    newPassword: string;
 }
 
 export interface UserResendOtpInputDTO { // resend otp input.

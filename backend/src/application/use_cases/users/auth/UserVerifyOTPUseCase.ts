@@ -24,24 +24,19 @@ export class UserVerifyOtpUseCase implements IUserVerifyOtpUseCase {
         }
         const userInputOtp = otp;
 
-        console.log(userInputOtp, "input");
-        console.log(userData,userInputOtp,"hereeeeeeeeeeee")
         if(!userData || userData.otp !== userInputOtp) {
             throw new BadRequestError("Invalid or expired OTP");
         }
 
         const existing = await this._userRepository.findByEmail(email);
-        console.log("Existing:", existing);
         if(existing) {
             await this._keyValueRepository.del(`otp:register:user:${email}`);
             throw new ConflictError("An account with this email already exists, please login!");
         }
       
-        console.log("user data at the redis: ",userData)
         if(!userData) throw new BadRequestError("user data not available");
 
         const savedUser = userData;
-        console.log(savedUser);
 
         await this._userRepository.create({...savedUser, passwordHash:savedUser.password, isVerified: true, phone: null});
         await this._keyValueRepository.del(`pending:register:user:${email}`);

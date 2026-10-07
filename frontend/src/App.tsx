@@ -1,11 +1,13 @@
+import { Routes, Route } from 'react-router-dom';
 import './App.css'
+import { UserLoginPage } from './pages/user/UserLoginPage';
 
 function App() {
   return (
-    <div className='bg-amber-300'>
-      <h1>Hello World</h1>
-    </div>
+    <Routes>
+      <Route path="/login" element={<UserLoginPage />} />
+    </Routes>
   )
 }
 
-export default App
+export default App;

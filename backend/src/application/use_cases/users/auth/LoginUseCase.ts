@@ -56,7 +56,6 @@ export class LoginUserUseCase implements IUserLoginUseCase {
                 notifications: user.notifications,
                 addresses: user.addresses,
                 status: user.status,
-                
             }
         }
     }

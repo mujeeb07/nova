@@ -41,6 +41,11 @@ implements IUserRepository, IPasswordResettable
         return doc ? doc._id.toString() : null
     }
 
+    async verifyForgotPasswordOtp(otp: string): Promise<string | null> {
+        
+        return null;
+    }
+
     // reset-password.
     async updatePasswordHash(accountId: string, passwordHash: string): Promise<void> {
         await UserModel.updateOne({ accountId }, { $set: { passwordHash } });

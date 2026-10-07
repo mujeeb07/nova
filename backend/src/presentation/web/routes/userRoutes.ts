@@ -38,7 +38,8 @@ const userForgotPassword = new ForgotPasswordUseCase(
     sendOtpEmail,
     "reset:user"
 );
-const userForgotPasswordController = new ForgotPasswordController(userForgotPassword)
+const userForgotPasswordController = new ForgotPasswordController(userForgotPassword);
+
 
 // reset-password.
 const userResetPassword = new ResetPasswordUseCase(
@@ -54,6 +55,7 @@ userRouter.post("/verify", userController.verify);
 userRouter.post("/login", userController.login);
 
 userRouter.post("/forgot-password", userForgotPasswordController.handle);
+
 userRouter.post("/reset-password", userResetPasswordController.handle)
 
 export default userRouter;

@@ -6,7 +6,7 @@ import {
 } from "../../../../application/interfaces/users/IUserUseCase";
 import { COOKIE_CONFIG } from "../../../../config/cookie_config";
 import { asyncHandlor } from "../../../../utils/errors/asyncHandlor";
-import { BadRequestError } from "../../../../utils/errors";
+import { AppError, BadRequestError } from "../../../../utils/errors";
 import { sendSuccess } from "../../../../utils/apiResponse";
 
 export class AuthController {
@@ -51,4 +51,13 @@ export class AuthController {
         })
         sendSuccess(res, result, "Login successful");
     });
+
+    // FORGOT_PASSWORD.
+    forgotPassword = asyncHandlor(async (req: Request, res: Response) => {
+        const { email, otp } = req.body;
+
+        const result = this._verifyOtpUseCase.execute({email, otp})
+    })
+
+
 }
