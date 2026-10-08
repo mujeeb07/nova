@@ -13,8 +13,8 @@ import { ForgotPasswordUseCase } from "../../../application/use_cases/shared/aut
 import { sendOtpEmail } from "../../../infrastructure/services/otp_service";
 
 import { ForgotPasswordController } from "../controllers/shared/ForgotPasswordController";
-import { ResetPasswordUseCase } from "../../../application/use_cases/shared/auth/ResetPasswordUseCase";
-import { ResetPasswordController } from "../controllers/shared/ResetPasswordController";
+import { VerifyForgotPasswordOtpUseCase } from "../../../application/use_cases/shared/auth/VerifyForgotPasswordOtpUseCase";
+import { CreateNewPasswordUseCase } from "../../../application/use_cases/shared/auth/CreateNewPasswordUseCase";
 
 const vendorRouter = Router();
 
@@ -55,23 +55,23 @@ const vendorForgotPassword = new ForgotPasswordUseCase(
     sendOtpEmail,
     "reset:vendor"
 );
-const vendorForgotPasswordController = new ForgotPasswordController(vendorForgotPassword);
+
+const PREFIX = "forgot:vendor";
+const vendorForgotPasswordController = new ForgotPasswordController(
+    new ForgotPasswordUseCase(vendorCredentialsRepository, keyValueService, sendOtpEmail, PREFIX),
+    new VerifyForgotPasswordOtpUseCase(keyValueService, PREFIX),
+    new CreateNewPasswordUseCase(vendorCredentialsRepository, keyValueService, passwordService, PREFIX)
+
+);
 
 const authController = new AuthController(loginUseCase, registerUseCase, verifyOtpUseCase);
-
-// reset-password.
-const vendorResetPassword = new ResetPasswordUseCase(
-    vendorCredentialsRepository,
-    keyValueService,
-    passwordService,
-    "reset:vendor"
-);
-const vendorResetPasswordController = new ResetPasswordController(vendorResetPassword);
 
 vendorRouter.post("/register", authController.register);
 vendorRouter.post("/verify-otp", authController.verifyOtp);
 vendorRouter.post("/login", authController.login);
-vendorRouter.post("/forgot-password", vendorForgotPasswordController.handle);
-vendorRouter.post("/reset-password", vendorResetPasswordController.handle);
+
+vendorRouter.post("/forgot-password", vendorForgotPasswordController.sendOtp);
+vendorRouter.post("/forgot-password/verify", vendorForgotPasswordController.verifyOtp);
+vendorRouter.post("/forgot-password/create", vendorForgotPasswordController.createPassword);
 
 export default vendorRouter;

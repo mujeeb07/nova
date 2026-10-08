@@ -30,8 +30,8 @@ export class VendorLoginUseCase implements IVendorLoginUseCase {
             throw new Error("Your account has been suspended. Contact support.");
         }
 
-        const accessToken = this._tokenService.signAccessToken({ vendorId: vendor.id });
-        const refreshToken = this._tokenService.signRefreshToken({ vendorId: vendor.id });
+        const accessToken = this._tokenService.signAccessToken({ accountId: vendor.id, role: "vendor" });
+        const refreshToken = this._tokenService.signRefreshToken({ accountId: vendor.id, role: "vendor" });
 
         return {
             vendor: {

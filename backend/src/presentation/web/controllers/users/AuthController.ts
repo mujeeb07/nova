@@ -51,13 +51,4 @@ export class AuthController {
         })
         sendSuccess(res, result, "Login successful");
     });
-
-    // FORGOT_PASSWORD.
-    forgotPassword = asyncHandlor(async (req: Request, res: Response) => {
-        const { email, otp } = req.body;
-
-        const result = this._verifyOtpUseCase.execute({email, otp})
-    })
-
-
 }

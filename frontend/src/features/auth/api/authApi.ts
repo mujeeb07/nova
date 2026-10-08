@@ -12,9 +12,12 @@ export function createAuthApi(basePath: string) {
             apiClient.post(`${basePath}/verify-otp`, data).then((res) => res.data),
 
         forgotPassword: (data: { email: string }) =>
-            apiClient.post(`${basePath}/forgot-password`, data).then((res) => res.data),
+            apiClient.post(`${basePath}/forgot-password`, data).then((r) => r.data),
 
-        resetPassword: (data: { email: string; otp: string; newPassword: string }) =>
-            apiClient.post(`${basePath}/reset-password`, data).then((res) => res.data),
+        verifyForgotOtp: (data: { email: string; otp: string }) =>
+            apiClient.post(`${basePath}/forgot-password/verify`, data).then((r) => r.data),
+
+        createNewPassword: (data: { email: string; resetToken: string; newPassword: string; confirmPassword: string }) =>
+            apiClient.post(`${basePath}/forgot-password/create`, data).then((r) => r.data),
     };
 }

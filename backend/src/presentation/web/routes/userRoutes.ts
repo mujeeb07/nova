@@ -9,10 +9,10 @@ import { LoginUserUseCase } from "../../../application/use_cases/users/auth/Logi
 import { UserVerifyOtpUseCase } from "../../../application/use_cases/users/auth/UserVerifyOTPUseCase";
 
 import { ForgotPasswordController } from "../controllers/shared/ForgotPasswordController";
-import { ResetPasswordUseCase } from "../../../application/use_cases/shared/auth/ResetPasswordUseCase";
-import { ResetPasswordController } from "../controllers/shared/ResetPasswordController";
 import { ForgotPasswordUseCase } from "../../../application/use_cases/shared/auth/ForgotPasswordUseCase";
 import { sendOtpEmail } from "../../../infrastructure/services/otp_service";
+import { VerifyForgotPasswordOtpUseCase } from "../../../application/use_cases/shared/auth/VerifyForgotPasswordOtpUseCase";
+import { CreateNewPasswordUseCase } from "../../../application/use_cases/shared/auth/CreateNewPasswordUseCase";
 
 const userRouter = Router();
 
@@ -38,24 +38,21 @@ const userForgotPassword = new ForgotPasswordUseCase(
     sendOtpEmail,
     "reset:user"
 );
-const userForgotPasswordController = new ForgotPasswordController(userForgotPassword);
 
 
-// reset-password.
-const userResetPassword = new ResetPasswordUseCase(
-    userRepository,
-    keyValueRepository,
-    passwordService,
-    "reset:user"
+const PREFIX = "forgot:user";
+const userForgotPasswordController = new ForgotPasswordController(
+    new ForgotPasswordUseCase(userRepository, keyValueRepository, sendOtpEmail, PREFIX),
+    new VerifyForgotPasswordOtpUseCase(keyValueRepository, PREFIX),
+    new CreateNewPasswordUseCase(userRepository, keyValueRepository, passwordService, PREFIX)
 );
-const userResetPasswordController = new ResetPasswordController(userResetPassword)
 
 userRouter.post("/register", userController.register);
 userRouter.post("/verify", userController.verify);
 userRouter.post("/login", userController.login);
 
-userRouter.post("/forgot-password", userForgotPasswordController.handle);
-
-userRouter.post("/reset-password", userResetPasswordController.handle)
+userRouter.post("/forgot-password", userForgotPasswordController.sendOtp);
+userRouter.post("/forgot-password/verify", userForgotPasswordController.verifyOtp);
+userRouter.post("/forgot-password/create", userForgotPasswordController.createPassword);
 
 export default userRouter;

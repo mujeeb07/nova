@@ -12,16 +12,16 @@ export class ForgotPasswordUseCase {
         private _cacheKeyPrefix: string
     ){};
 
-    async execute(email: string): Promise<void> {
+    async execute(rawEmail: string): Promise<void> {
+        const email = rawEmail.toLocaleLowerCase().trim();
         const accountId = await this._resettableRepository.findAccountByEmail(email);
         if(!accountId) return;
 
         const otp = generateOtp();
-        const ttlSeconds = Math.floor(OTP_CONFIG.EXPIRY_MS / 1000);
+        const ttl = Math.floor(OTP_CONFIG.EXPIRY_MS / 1000);
 
-        await this._keyValueService.set(`${this._cacheKeyPrefix}:${email}`, otp, ttlSeconds);
+        await this._keyValueService.set(`${this._cacheKeyPrefix}:otp:${email}`, otp, ttl);
         await this._sendOtpEmail(email, otp);
-        
     }
 
 }

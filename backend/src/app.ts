@@ -15,9 +15,9 @@ app.use(express.json());
 app.use("/api/v1/auth/admin", adminRouter);
 app.use("/api/v1/auth/user", userRouter);
 app.use("/api/v1/auth/vendor", vendorRouter);
-app.get("/test", (req, res) => {
-    res.json({ success:true })
-});
+// app.get("/test", (req, res) => {
+//     res.json({ success:true })
+// });
 
 app.use(errorHandler);
 

@@ -5,7 +5,7 @@ export class BadRequestError extends AppError {
     constructor(message = "Bad reqeust") { super(message, HttpStatus.BAD_REQUEST); }
 }
 
-export class UnAuthorizedError extends AppError {
+export class UnauthorizedError extends AppError {
     constructor(message = "UnAuthorized") { super(message, HttpStatus.UNAUTHORIZED); }
 }
 
