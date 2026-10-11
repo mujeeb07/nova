@@ -6,11 +6,11 @@
 
 /* 3. Configure Theme Variables (Replaces tailwind.config.js) */
 @theme {
-  --font-sans: 'Inter', sans-serif;
+  --font-sans: 'Plus Jakarta Sans', sans-serif;
   --font-heading: 'Plus Jakarta Sans', sans-serif;
 
   --color-nova-blue: #2563eb;
-  --color-nova-emerald: #065f46;
+  --color-nova-emerald: #00685D;
   --color-nova-indigo: #524be3;
 }
 

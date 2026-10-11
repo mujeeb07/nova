@@ -25,7 +25,7 @@ export function PasswordField({ label, value, onChange, ringColor, hint }: Passw
                     minLength={8}
                     required
                     style={{ "--tw-ring-color": ringColor } as React.CSSProperties}
-                    className="w-full pl-9 pr-9 py-2 text-sm border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:border-transparent transition-all placeholder:text-slate-300"
+                    className="w-full pl-9 pr-9 py-2 text-md border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:border-transparent transition-all placeholder:text-slate-300"
                 />
                 <button
                     type="button"

@@ -1,49 +1,32 @@
-import { IUserRepository } from "../../../../domain/repositories/users/IUserRepository";
-import bcrypt from "bcrypt";
-import jwt from "jsonwebtoken";
+import type { IUserRepository } from "../../../../domain/repositories/users/IUserRepository";
 import type { IUserLoginUseCase } from "../../../interfaces/users/IUserUseCase";
-import { UserLoginInputDTO, UserLoginOutputDTO } from "../../../dtos/users/user.dto";
+import type { IPasswordService } from "../../../services/IPasswordService";
+import type { ITokenService } from "../../../services/ITokenService";
+import type { UserLoginInputDTO, UserLoginOutputDTO } from "../../../dtos/users/user.dto";
+import { UnauthorizedError, ForbiddenError } from "../../../../utils/errors";
 
 export class LoginUserUseCase implements IUserLoginUseCase {
-    constructor ( private readonly _userRepository: IUserRepository ) {};
+    constructor(
+        private readonly _userRepository: IUserRepository,
+        private readonly _passwordService: IPasswordService,
+        private readonly _tokenService: ITokenService
+    ) {}
 
     async execute(input: UserLoginInputDTO): Promise<UserLoginOutputDTO> {
-        const user = await this._userRepository.findByEmail(input.email);
-        if(!user) {
-            throw new Error("invalid email or password");
-        }
-        const isPasswordValid = await bcrypt.compare(input.password, user.passwordHash);
-        if(!isPasswordValid) throw new Error("invalid email or password");
-        if(!user.status) {
-            throw new Error("something wrong with your account activity");
-        }
+        const user = await this._userRepository.findByEmail(input.email.toLowerCase().trim());
 
-        const jwtSecret = process.env.JWT_SECRET || "falback_secret_key";
-        const accessToken = jwt.sign(
-            {
-                sub: user.id,
-                role: "user",
-                tokenType: "access"
-            },
-            jwtSecret,
-            {
-                expiresIn: "15m"
-            }
-        );
+        if (!user || !user.passwordHash) throw new UnauthorizedError("Invalid email or password");
 
-        const refreshToken = jwt.sign(
-            {
-                sub: user.id,
-                role: "user",
-                tokenType: "refresh"
-            },
-            jwtSecret,
-            {
-                expiresIn: "7d"
-            }
-        );
+        const isMatch = await this._passwordService.compare(input.password, user.passwordHash);
+        if (!isMatch) throw new UnauthorizedError("Invalid email or password");
 
-        return { 
+        if (!user.isVerified) throw new ForbiddenError("Please verify your email first");
+        if (!user.status) throw new ForbiddenError("Your account has been blocked");
+
+        const accessToken = this._tokenService.signAccessToken({ accountId: user.id, role: "user" });
+        const refreshToken = this._tokenService.signRefreshToken({ accountId: user.id, role: "user" });
+
+        return {
             accessToken,
             refreshToken,
             user: {
@@ -56,7 +39,7 @@ export class LoginUserUseCase implements IUserLoginUseCase {
                 notifications: user.notifications,
                 addresses: user.addresses,
                 status: user.status,
-            }
-        }
+            },
+        };
     }
 }

@@ -25,6 +25,7 @@ export interface IUser {
     name: string;
     email: string;
     phone: string;
+    googleId?: string;
     passwordHash: string;
     profileImage: string;
     walletBalance: number;

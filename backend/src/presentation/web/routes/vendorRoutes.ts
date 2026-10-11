@@ -49,13 +49,6 @@ const verifyOtpUseCase = new VendorVerifyOtpUseCase(
 );
 
 // forgot-password.
-const vendorForgotPassword = new ForgotPasswordUseCase(
-    vendorCredentialsRepository,
-    keyValueService,
-    sendOtpEmail,
-    "reset:vendor"
-);
-
 const PREFIX = "forgot:vendor";
 const vendorForgotPasswordController = new ForgotPasswordController(
     new ForgotPasswordUseCase(vendorCredentialsRepository, keyValueService, sendOtpEmail, PREFIX),

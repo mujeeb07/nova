@@ -37,17 +37,15 @@ implements IUserRepository, IPasswordResettable
 
     // forgot password.
     async findAccountByEmail(email: string): Promise<string | null> {
-        const doc = await UserModel.findOne({ email }).select("_id");
+        const doc = await UserModel.findOne({ email: email.toLowerCase().trim() }).select("_id");
         return doc ? doc._id.toString() : null
     }
 
-    async verifyForgotPasswordOtp(otp: string): Promise<string | null> {
-        
-        return null;
-    }
-
-    // reset-password.
+    // set new password
     async updatePasswordHash(accountId: string, passwordHash: string): Promise<void> {
-        await UserModel.updateOne({ accountId }, { $set: { passwordHash } });
+        const result = await UserModel.updateOne({ _id: accountId }, { $set: { passwordHash } });
+        if (result.matchedCount === 0) {
+            throw new Error("Account not found while updating password");
+        }
     }
 }

@@ -6,14 +6,17 @@ import {
 } from "../../../../application/interfaces/users/IUserUseCase";
 import { COOKIE_CONFIG } from "../../../../config/cookie_config";
 import { asyncHandlor } from "../../../../utils/errors/asyncHandlor";
-import { AppError, BadRequestError } from "../../../../utils/errors";
+import { BadRequestError } from "../../../../utils/errors";
 import { sendSuccess } from "../../../../utils/apiResponse";
+import { UserGoogleLoginUseCase } from "../../../../application/use_cases/users/auth/UserGoogleLoginUseCase";
+
 
 export class AuthController {
     constructor(
         private _registerUseCase: IUserRegisterUseCase,
         private _loginUseCase: IUserLoginUseCase,
         private _verifyOtpUseCase: IUserVerifyOtpUseCase,
+        private _googleLoginUseCase: UserGoogleLoginUseCase
     ) {}
 
     // REGISTER
@@ -50,5 +53,24 @@ export class AuthController {
             sameSite: COOKIE_CONFIG.SAME_SITE
         })
         sendSuccess(res, result, "Login successful");
+    });
+
+    // GOOGLE LOGIN.
+    googleLogin = asyncHandlor(async (req: Request, res: Response) => {
+        const { googleAccessToken } = req.body;
+        if (!googleAccessToken) throw new BadRequestError("Google token is required");
+
+        const result = await this._googleLoginUseCase.execute(googleAccessToken);
+            res.cookie("accessToken", result.accessToken, {
+                httpOnly: COOKIE_CONFIG.HTTP_ONLY,
+                secure: COOKIE_CONFIG.SECURE,
+                sameSite: COOKIE_CONFIG.SAME_SITE,
+            }).cookie("refreshToken", result.refreshToken, {
+                httpOnly: COOKIE_CONFIG.HTTP_ONLY,
+                secure: COOKIE_CONFIG.SECURE,
+                sameSite: COOKIE_CONFIG.SAME_SITE,
+            });
+
+            sendSuccess(res, result, "Login successful");
     });
 }

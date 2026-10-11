@@ -7,131 +7,44 @@ export interface IUserDocument extends Omit<IUser,"id"> {
 
 const geoJSONPointSchema = new Schema<IGeoJSONPoint>(
     {
-        type: {
-            type: String,
-            enum:["Point"],
-            required: true
-        },
-        
-        coordinates: {
-            type: [Number],
-            required: true
-        }
+        type: { type: String, enum:["Point"], required: true },
+        coordinates: { type: [Number], required: true }
     },
-    {
-        _id: false
-    }
+    { _id: false }
 );
 
 const addressSchema = new Schema<IAddress>(
     {
-        id: {
-            type: String,
-            required: true
-        },
-
-        label: {
-            type: String,
-            required: true
-        },
-
-        street: {
-            type: String,
-            required: true
-        },
-
-        city: {
-            type: String,
-            required: true,
-        },
-
-        state: {
-            type: String,
-            required: true
-        },
-
-        zipCode: {
-            type: String,
-            required: true
-        },
-
-        location: {
-            type: geoJSONPointSchema,
-            required: true,
-        },
-
-        isDefault: {
-            type: Boolean,
-            default: true
-        }
+        id: { type: String, required: true },
+        label: { type: String, required: true },
+        street: { type: String, required: true },
+        city: { type: String, required: true },
+        state: { type: String, required: true },
+        zipCode: { type: String, required: true },
+        location: { type: geoJSONPointSchema, required: true },
+        isDefault: { type: Boolean, default: true }
     }, 
-    {
-        _id: true
-    }
+    { _id: true }
 );
 
 const notificationsSchema = new Schema<INotifications>(
     {
-        orderUpdates: {
-            type: Boolean,
-            default: true
-        },
-
-        promotions: {
-            type: Boolean,
-            default: true
-        },
-
-        aiSuggestions: {
-            type: Boolean,
-            default: true
-        }
+        orderUpdates: { type: Boolean, default: true },
+        promotions: { type: Boolean, default: true },
+        aiSuggestions: { type: Boolean, default: true }
     }
 )
 
 const userSchema = new Schema<IUserDocument>(
     {
-        name: {
-            type: String,
-            required: true,
-            trim: true
-        },
-
-        email: {
-            type: String,
-            required: true,
-            unique: true,
-            lowercase: true,
-            trim: true
-        },
-
-        phone: {
-            type: String,
-            unique: true,
-            trim: true
-        },
-
-        passwordHash: {
-            type: String,
-            required: false
-        },
-
-        profileImage: {
-            type: String,
-            default: ""
-        },
-
-        walletBalance: {
-            type: Number,
-            default: 0,
-            min: 0
-        },
-
-        fcmToken: {
-            type: [String],
-            default: []
-        },
-
+        name: { type: String, required: true, trim: true },
+        email: { type: String, required: true, unique: true, lowercase: true, trim: true },
+        phone: { type: String, trim: true, unique: true, sparse: true },
+        googleId: { type: String, unique: true, sparse: true },
+        passwordHash: { type: String, required: false },
+        profileImage: { type: String, default: "" },
+        walletBalance: { type: Number, default: 0, min: 0 },
+        fcmToken: { type: [String], default: [] },
         notifications: {
             type: notificationsSchema,
             default: () => ({
@@ -140,25 +53,11 @@ const userSchema = new Schema<IUserDocument>(
                 promotions: true
             })
         },
-
-        addresses: {
-            type: [addressSchema],
-            default:[]
-        },
-
-        isVerified: {
-            type: Boolean,
-            default: false
-        },
-
-        status: {
-            type: Boolean,
-            default: true
-        }
+        addresses: { type: [addressSchema], default:[] },
+        isVerified: { type: Boolean, default: false },
+        status: { type: Boolean, default: true }
     },
-    {
-        timestamps: true
-    }
+    { timestamps: true }
 );
 
 export const UserModel = mongoose.model<IUserDocument>("user", userSchema);

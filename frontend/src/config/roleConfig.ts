@@ -1,4 +1,4 @@
-export type Role = "user" | "vendor" | "admin" | "delivery_partner";
+export type Role = "user" | "vendor" | "admin" | "delivery_partner" | "super_admin";
 
 export type AuthLayoutType = "centered" | "split" | "wizard";
 
@@ -46,7 +46,7 @@ export const roleConfigs: Record<Role, RoleConfig> = {
         apiBasePath: "/api/v1/auth/user",
         brandName: "nova",
         tagline: "Freshness delivered, daily.",
-        theme: { primary: "#007BFF", primaryHover: "#1d4ed8", ring: "#3b82f6", bg: "#f8fafc" },
+        theme: { primary: "#007BFF", primaryHover: "#1d4ed8", ring: "#007BFF", bg: "#f8fafc" },
         layout: "centered",
         registerFields: [
             { key: "name", label: "Full Name", type: "text", placeholder: "John Doe" },
@@ -59,11 +59,11 @@ export const roleConfigs: Record<Role, RoleConfig> = {
     vendor: {
         role: "vendor",
         apiBasePath: "/api/v1/auth/vendor",
-        brandName: "nova Vendor",
+        brandName: "nova vendor",
         theme: {
-            primary: "#065f46",
+            primary: "#00685D",
             primaryHover: "#064e3b",
-            ring: "#059669",
+            ring: "#00685D",
             bg: "#f8fafc",
             bannerDark: "#022c22",
         },
@@ -73,14 +73,25 @@ export const roleConfigs: Record<Role, RoleConfig> = {
             { key: "contactPerson", label: "Contact Person", type: "text" },
             { key: "phone", label: "Phone Number", type: "tel" },
         ],
-        afterLoginRedirect: "/vendor/dashboard",
+        afterLoginRedirect: "/vendor/home",
         afterRegisterRedirect: "/vendor/verify-otp",
+    },
+
+    super_admin: {
+        role: "super_admin",
+        apiBasePath: "/api/v1/auth/admin",
+        brandName: "nova super admin portal",
+        theme: { primary: "#524be3", primaryHover: "#433bc8", ring: "#6366f1", bg: "#f3f5fc" },
+        layout: "centered",
+        registerFields: [],
+        afterLoginRedirect: "/admin/overview",
+        afterRegisterRedirect: "",
     },
 
     admin: {
         role: "admin",
         apiBasePath: "/api/v1/auth/admin",
-        brandName: "nova Super Admin Portal",
+        brandName: "nova Admin Portal",
         theme: { primary: "#524be3", primaryHover: "#433bc8", ring: "#6366f1", bg: "#f3f5fc" },
         layout: "centered",
         registerFields: [],
@@ -91,7 +102,7 @@ export const roleConfigs: Record<Role, RoleConfig> = {
     delivery_partner: {
         role: "delivery_partner",
         apiBasePath: "/api/v1/auth/delivery-partner",
-        brandName: "nova Delivery",
+        brandName: "nova delivery",
         theme: { primary: "#2563eb", primaryHover: "#1d4ed8", ring: "#3b82f6", bg: "#f8fafc" },
         layout: "wizard",
         registerFields: [

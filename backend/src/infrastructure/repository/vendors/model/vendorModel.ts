@@ -72,7 +72,7 @@ const vendorSchema = new Schema<IVendorDocument>(
         shopName: { type: String, required: true },
         ownerName: { type: String, required: true },
         email: { type: String, required: true, unique: true, lowercase: true },
-        phone: { type: String, required: true, unique: true },
+        phone: { type: String, trim: true, unique: true, sparse: true },
         shopImages: { type: [String], default: [] },
         addresses: { type: [addressSchema], default: [] },
         serviceIds: { type: [String], default: [] },

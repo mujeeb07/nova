@@ -13,33 +13,31 @@ import { ForgotPasswordUseCase } from "../../../application/use_cases/shared/aut
 import { sendOtpEmail } from "../../../infrastructure/services/otp_service";
 import { VerifyForgotPasswordOtpUseCase } from "../../../application/use_cases/shared/auth/VerifyForgotPasswordOtpUseCase";
 import { CreateNewPasswordUseCase } from "../../../application/use_cases/shared/auth/CreateNewPasswordUseCase";
+import { UserGoogleLoginUseCase } from "../../../application/use_cases/users/auth/UserGoogleLoginUseCase";
+import { GoogleAuthService } from "../../../infrastructure/services/GoogleAuthService";
+import { TokenService } from "../../../infrastructure/services/TokenService";
 
 const userRouter = Router();
 
 const userRepository = new UserRepository();
 const passwordService = new PasswordService();
 const keyValueRepository = new KeyValueRepository();
+const googleAuthService = new GoogleAuthService();
+const tokenService = new TokenService();
 
 const userRegisterUseCase = new UserRegisterUseCase(userRepository, passwordService, keyValueRepository);
-const userLoginUseCase = new LoginUserUseCase(userRepository);
+const userLoginUseCase = new LoginUserUseCase(userRepository, passwordService, tokenService);
 const userVerifyOTPUseCase = new UserVerifyOtpUseCase(userRepository, keyValueRepository)
-
+const userGoogleLoginUseCase = new UserGoogleLoginUseCase(userRepository, googleAuthService, tokenService)
 
 const userController = new AuthController(
     userRegisterUseCase, 
     userLoginUseCase, 
-    userVerifyOTPUseCase
+    userVerifyOTPUseCase,
+    userGoogleLoginUseCase
 );
 
 // forgot-password.
-const userForgotPassword = new ForgotPasswordUseCase(
-    userRepository,
-    keyValueRepository,
-    sendOtpEmail,
-    "reset:user"
-);
-
-
 const PREFIX = "forgot:user";
 const userForgotPasswordController = new ForgotPasswordController(
     new ForgotPasswordUseCase(userRepository, keyValueRepository, sendOtpEmail, PREFIX),
@@ -48,11 +46,13 @@ const userForgotPasswordController = new ForgotPasswordController(
 );
 
 userRouter.post("/register", userController.register);
-userRouter.post("/verify", userController.verify);
+userRouter.post("/verify-otp", userController.verify);
 userRouter.post("/login", userController.login);
 
 userRouter.post("/forgot-password", userForgotPasswordController.sendOtp);
 userRouter.post("/forgot-password/verify", userForgotPasswordController.verifyOtp);
 userRouter.post("/forgot-password/create", userForgotPasswordController.createPassword);
+
+userRouter.post("/google", userController.googleLogin);
 
 export default userRouter;

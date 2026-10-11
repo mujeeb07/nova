@@ -1,6 +1,6 @@
 import { Request, Response, NextFunction } from "express";
 import { ITokenService, AccountRole } from "../../application/services/ITokenService";
-import { UnAuthorizedError, ForbiddenError } from "../../utils/errors";
+import { UnauthorizedError, ForbiddenError } from "../../utils/errors";
 
 
 export interface AuthenticatedRequest extends Request{
@@ -12,10 +12,11 @@ export function authenticate(tokenService: ITokenService, allowedRoles?: Account
     return(req: Request, res: Response, next: NextFunction): void => {
         const header = req.headers.authorization;
         if(!header?.startsWith("Bearer ")) {
-            throw new UnAuthorizedError("Missing or malformed token");
+            throw new UnauthorizedError("Missing or malformed token");
         }
 
-        const token = header.slice("Bearer ".length);
+        const token = req.cookies.accessToken;
+        if (!token) throw new UnauthorizedError("Not logged in");
         const payload = tokenService.verifyAccessToken(token);
 
         if(allowedRoles && !allowedRoles.includes(payload.role)) {
