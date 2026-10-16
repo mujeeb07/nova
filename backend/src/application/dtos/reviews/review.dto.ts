@@ -1,5 +1,3 @@
-import { ReviewStatus } from "../../../domain/entities/reviews/IReview";
-
 export interface SubmitReviewInputDTO {
     vendorId: string;
     customerId: string;

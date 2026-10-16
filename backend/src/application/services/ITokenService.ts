@@ -1,4 +1,4 @@
-export type AccountRole = "vendor" | "user" | "SUPER_ADMIN";
+export type AccountRole = "vendor" | "user" | "super_admin" | "admin";
 
 export interface ITokenPayload {
     accountId: string;

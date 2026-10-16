@@ -43,15 +43,22 @@ export class AuthController {
         if(!email || !password)  throw new BadRequestError("Email and Password is required");
 
         const result = await this._loginUseCase.execute({ email, password });
-        res.cookie("accessToken", result.accessToken, {
+
+        res
+        .cookie("accessToken", result.accessToken, {
             httpOnly: COOKIE_CONFIG.HTTP_ONLY,
             secure: COOKIE_CONFIG.SECURE,
-            sameSite: COOKIE_CONFIG.SAME_SITE
-        }).cookie("refreshToken", result.refreshToken, {
-            httpOnly: COOKIE_CONFIG.HTTP_ONLY,
-            secure: COOKIE_CONFIG.SECURE,
-            sameSite: COOKIE_CONFIG.SAME_SITE
+            sameSite: COOKIE_CONFIG.SAME_SITE,
+            maxAge: COOKIE_CONFIG.ACCESS_TOKEN_MAX_AGE,
+            path: COOKIE_CONFIG.PATH,
         })
+        .cookie("refreshToken", result.refreshToken, {
+            httpOnly: COOKIE_CONFIG.HTTP_ONLY,
+            secure: COOKIE_CONFIG.SECURE,
+            sameSite: COOKIE_CONFIG.SAME_SITE,
+            maxAge: COOKIE_CONFIG.REFRESH_TOKEN_MAX_AGE,
+            path: COOKIE_CONFIG.PATH,
+        });
         sendSuccess(res, result, "Login successful");
     });
 
@@ -61,16 +68,20 @@ export class AuthController {
         if (!googleAccessToken) throw new BadRequestError("Google token is required");
 
         const result = await this._googleLoginUseCase.execute(googleAccessToken);
-            res.cookie("accessToken", result.accessToken, {
-                httpOnly: COOKIE_CONFIG.HTTP_ONLY,
-                secure: COOKIE_CONFIG.SECURE,
-                sameSite: COOKIE_CONFIG.SAME_SITE,
-            }).cookie("refreshToken", result.refreshToken, {
-                httpOnly: COOKIE_CONFIG.HTTP_ONLY,
-                secure: COOKIE_CONFIG.SECURE,
-                sameSite: COOKIE_CONFIG.SAME_SITE,
-            });
+        res.cookie("accessToken", result.accessToken, {
+            httpOnly: COOKIE_CONFIG.HTTP_ONLY,
+            secure: COOKIE_CONFIG.SECURE,
+            sameSite: COOKIE_CONFIG.SAME_SITE,
+            maxAge: COOKIE_CONFIG.ACCESS_TOKEN_MAX_AGE,
+            path: COOKIE_CONFIG.PATH,
+        }).cookie("refreshToken", result.refreshToken, {
+            httpOnly: COOKIE_CONFIG.HTTP_ONLY,
+            secure: COOKIE_CONFIG.SECURE,
+            sameSite: COOKIE_CONFIG.SAME_SITE,
+            maxAge: COOKIE_CONFIG.REFRESH_TOKEN_MAX_AGE,
+            path: COOKIE_CONFIG.PATH,
+        });
 
-            sendSuccess(res, result, "Login successful");
+        sendSuccess(res, result, "Login successful");
     });
 }

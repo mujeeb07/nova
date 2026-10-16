@@ -4,13 +4,10 @@ import {
     VendorVerifyOtpInputDTO,
     VendorVerifyOtpOutputDTO,
     VendorResendOtpInputDTO,
-
     VendorLoginInputDTO,
     VendorLoginOutputDTO,
-
     VendorForgotPasswordInputDTO,
     VendorResetPasswordInputDTO,
-
     VendorStoreSetupInputDTO,
     VendorStoreSetupOutputDTO,
 } from "../../dtos/vendors/vendor.dto";

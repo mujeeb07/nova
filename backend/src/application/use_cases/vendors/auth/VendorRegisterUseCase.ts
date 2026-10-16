@@ -4,8 +4,8 @@ import type { VendorRegisterInputDTO, VendorRegisterOutputDTO } from "../../../d
 import type { IKeyValueRepository } from "../../../../domain/repositories/key_value/IOtpRepository";
 import { IPasswordService } from "../../../services/IPasswordService";
 import { generateOtp } from "../../../../utils/generateOtp";
-import { sendOtpEmail } from "../../../../infrastructure/services/otp_service";
 import { OTP_CONFIG } from "../../../../config/otp_config";
+import { queueEmail } from "../../../../infrastructure/queues/emailQueue";
 
 
 export class VendorRegisterUseCase implements IVendorRegisterUseCase {
@@ -39,7 +39,7 @@ export class VendorRegisterUseCase implements IVendorRegisterUseCase {
         );
 
         try {
-            sendOtpEmail(email, otp);
+            queueEmail({ email, otp });
         } catch (error) {
             throw new Error(`Failed to send OTP email: ${(error as Error).message}`);
         }

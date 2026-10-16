@@ -46,7 +46,12 @@ apiClient.interceptors.response.use(
       return Promise.reject(error);
     }
 
-    if (error.response?.status === 401 && !originalRequest._retry) {
+    if (
+      error.response?.status === 401 && 
+      !originalRequest._retry && 
+      !originalRequest.url?.includes('/login') && 
+      !originalRequest.url?.includes('/refresh')
+    ) {
       if (isRefreshing) {
         return new Promise((resolve, reject) => {
           failedQueue.push({ resolve, reject });
@@ -60,7 +65,7 @@ apiClient.interceptors.response.use(
 
       try {
         await axios.post(
-          `${apiClient.defaults.baseURL}/auth/refresh`,
+          `${apiClient.defaults.baseURL}/api/v1/auth/refresh`,
           {},
           { withCredentials: true }
         );
@@ -74,7 +79,6 @@ apiClient.interceptors.response.use(
         processQueue(refreshError as AxiosError, null);
 
         console.error('Refresh token expired or invalid. Logging out...');
-        
         const err = refreshError as AxiosError;
         return Promise.reject(err.response?.data || err.message);
       }

@@ -1,4 +1,3 @@
-// infrastructure/services/GoogleAuthService.ts
 import { OAuth2Client } from "google-auth-library";
 import type { IGoogleAuthService, GoogleProfile } from "../../application/services/IGoogleAuthService";
 import { UnauthorizedError } from "../../utils/errors";

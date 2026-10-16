@@ -24,12 +24,7 @@ const bankDetailsSchema = new Schema<IBankDetails>(
 
 const vendorPayoutAccountSchema = new Schema<IVendorPayoutAccountDocument>(
     {
-        vendorId: {
-            type: Schema.Types.ObjectId,
-            ref: "vendor",
-            required: true,
-            unique: true
-        },
+        vendorId: { type: Schema.Types.ObjectId, ref: "vendor", required: true, unique: true },
         bankDetails: { type: bankDetailsSchema, required: true },
         commissionRate: { type: Number, required: true, default: 0, min: 0.1, max: 1 },
         pendingSettlementAmount: { type: Number, required: true, default: 0, min: 0, }

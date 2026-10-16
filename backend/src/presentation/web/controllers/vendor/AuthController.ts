@@ -26,13 +26,17 @@ export class AuthController {
         res.cookie("accessToken", result.accessToken, {
             httpOnly: COOKIE_CONFIG.HTTP_ONLY,
             secure: COOKIE_CONFIG.SECURE,
-            sameSite: COOKIE_CONFIG.SAME_SITE
+            sameSite: COOKIE_CONFIG.SAME_SITE,
+            maxAge: COOKIE_CONFIG.ACCESS_TOKEN_MAX_AGE,
+            path: COOKIE_CONFIG.PATH,
         }).cookie("refreshToken", result.refreshToken, {
             httpOnly: COOKIE_CONFIG.HTTP_ONLY,
             secure: COOKIE_CONFIG.SECURE,
-            sameSite: COOKIE_CONFIG.SAME_SITE
+            sameSite: COOKIE_CONFIG.SAME_SITE,
+            maxAge: COOKIE_CONFIG.REFRESH_TOKEN_MAX_AGE,
+            path: COOKIE_CONFIG.PATH,
         });
-        sendSuccess(res, result, "Login successful.")
+        sendSuccess(res, result, "Login successful.");
     });
 
     // register.

@@ -60,13 +60,7 @@ export const roleConfigs: Record<Role, RoleConfig> = {
         role: "vendor",
         apiBasePath: "/api/v1/auth/vendor",
         brandName: "nova vendor",
-        theme: {
-            primary: "#00685D",
-            primaryHover: "#064e3b",
-            ring: "#00685D",
-            bg: "#f8fafc",
-            bannerDark: "#022c22",
-        },
+        theme: { primary: "#00685D", primaryHover: "#064e3b", ring: "#00685D", bg: "#f8fafc", bannerDark: "#022c22" },
         layout: "split",
         registerFields: [
             { key: "businessName", label: "Business Name", type: "text" },
@@ -79,19 +73,19 @@ export const roleConfigs: Record<Role, RoleConfig> = {
 
     super_admin: {
         role: "super_admin",
-        apiBasePath: "/api/v1/auth/admin",
+        apiBasePath: "/api/v1/auth/super-admin",
         brandName: "nova super admin portal",
         theme: { primary: "#524be3", primaryHover: "#433bc8", ring: "#6366f1", bg: "#f3f5fc" },
         layout: "centered",
         registerFields: [],
-        afterLoginRedirect: "/admin/overview",
+        afterLoginRedirect: "/super-admin/overview",
         afterRegisterRedirect: "",
     },
 
     admin: {
         role: "admin",
         apiBasePath: "/api/v1/auth/admin",
-        brandName: "nova Admin Portal",
+        brandName: "nova admin portal",
         theme: { primary: "#524be3", primaryHover: "#433bc8", ring: "#6366f1", bg: "#f3f5fc" },
         layout: "centered",
         registerFields: [],

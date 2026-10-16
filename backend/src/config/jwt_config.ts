@@ -1,5 +1,4 @@
-
-
+import "dotenv/config";
 import type { SignOptions } from "jsonwebtoken";
 
 function required(name: string): string {

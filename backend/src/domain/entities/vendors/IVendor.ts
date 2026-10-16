@@ -59,13 +59,11 @@ export interface IVendor {
     updatedAt: Date;
 }
 
-
 export interface IVendorCredentials {
     vendorId: string;
     passwordHash: string;
     verifiedAt: Date | null;
 }
-
 
 export interface IBankDetails {
     accountHolderName: string;

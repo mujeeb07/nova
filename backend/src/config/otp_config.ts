@@ -1,4 +1,3 @@
-
 export const OTP_CONFIG = {
     EXPIRY_MINUTES: Number( process.env.OTP_EXPIRY_MINUTES || 10 ),
     

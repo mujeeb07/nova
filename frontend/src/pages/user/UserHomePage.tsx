@@ -13,12 +13,11 @@ import {
   Truck,
   Globe,
   Share2,
-  CheckCircle2,
   ShieldCheck,
 } from "lucide-react";
 
 export const UserHomePage: React.FC = () => {
-  const [selectedLocation, setSelectedLocation] = useState("Ernakulam, Kerala");
+  const [selectedLocation] = useState("Ernakulam, Kerala");
   const [searchQuery, setSearchQuery] = useState("");
 
   const categories = [

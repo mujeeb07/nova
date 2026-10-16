@@ -64,8 +64,8 @@ export class VendorVerifyOtpUseCase implements IVendorVerifyOtpUseCase {
 
         await this._keyValueService.del(cacheKey);
 
-        const accessToken = this._tokenService.signAccessToken({ vendorId: vendor.id });
-        const refreshToken = this._tokenService.signRefreshToken({ vendorId: vendor.id });
+        const accessToken = this._tokenService.signAccessToken({ accountId: vendor.id, role: "vendor" });
+        const refreshToken = this._tokenService.signRefreshToken({ accountId: vendor.id, role: "vendor" });
 
         return {
             vendor: {

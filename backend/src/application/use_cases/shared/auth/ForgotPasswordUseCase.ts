@@ -2,7 +2,7 @@ import type { IPasswordResettable } from "../../../../domain/repositories/shared
 import type { IKeyValueRepository } from "../../../../domain/repositories/key_value/IOtpRepository";
 import { generateOtp } from "../../../../utils/generateOtp";
 import { OTP_CONFIG } from "../../../../config/otp_config";
-
+import { queueEmail } from "../../../../infrastructure/queues/emailQueue";
 
 export class ForgotPasswordUseCase {
     constructor(
@@ -21,7 +21,8 @@ export class ForgotPasswordUseCase {
         const ttl = Math.floor(OTP_CONFIG.EXPIRY_MS / 1000);
 
         await this._keyValueService.set(`${this._cacheKeyPrefix}:otp:${email}`, otp, ttl);
-        await this._sendOtpEmail(email, otp);
+        console.log("queuing...")
+        await queueEmail({ email, otp });
     }
 
 }

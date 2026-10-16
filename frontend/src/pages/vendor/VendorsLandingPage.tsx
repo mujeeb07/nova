@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Users, Calendar, Truck, CheckCircle2, Quote } from 'lucide-react';
+import { Users, Calendar, Truck, Quote } from 'lucide-react';
 import { BrandLogo } from '../../features/auth/components/BrandLogo';
 
 

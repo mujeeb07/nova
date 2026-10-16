@@ -2,6 +2,7 @@ import app from "./app";
 import { MongooseDatabase } from "./infrastructure/db/config/mongoose";
 import 'dotenv/config';
 import { connectRedis } from "./infrastructure/db/config/redis_config";
+import "./infrastructure/workers/emailWorker";
 
 
 const PORT = process.env.PORT || 5000;

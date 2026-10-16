@@ -2,29 +2,26 @@ import { Request, Response, NextFunction } from "express";
 import { ITokenService, AccountRole } from "../../application/services/ITokenService";
 import { UnauthorizedError, ForbiddenError } from "../../utils/errors";
 
-
-export interface AuthenticatedRequest extends Request{
-    accountId: string;
-    role?: AccountRole;
-}
-
 export function authenticate(tokenService: ITokenService, allowedRoles?: AccountRole[]) {
     return(req: Request, res: Response, next: NextFunction): void => {
-        const header = req.headers.authorization;
-        if(!header?.startsWith("Bearer ")) {
-            throw new UnauthorizedError("Missing or malformed token");
+        const token = req.cookies?.accessToken;
+        if (!token) throw new UnauthorizedError("Not logged in");
+
+        let payload;
+        try {
+            payload = tokenService.verifyAccessToken(token);
+        } catch {
+            throw new UnauthorizedError("Invalid or expired access token");
         }
 
-        const token = req.cookies.accessToken;
-        if (!token) throw new UnauthorizedError("Not logged in");
-        const payload = tokenService.verifyAccessToken(token);
+        const normalizedRole = payload.role?.toLowerCase() as AccountRole;
 
-        if(allowedRoles && !allowedRoles.includes(payload.role)) {
+        if (allowedRoles && !allowedRoles.map((r) => r.toLowerCase()).includes(normalizedRole)) {
             throw new ForbiddenError("You don't have access to this resource");
         }
 
         req.accountId = payload.accountId;
-        req.role = payload.role;
+        req.role = normalizedRole;
         next();
     }
 }

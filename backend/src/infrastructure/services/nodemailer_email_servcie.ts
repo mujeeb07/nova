@@ -1,6 +1,5 @@
 import nodemailer from "nodemailer";
 
-
 export class NodemailerEmailService {
     private transporter;
 
@@ -13,15 +12,6 @@ export class NodemailerEmailService {
                 user: process.env.MAIL_USER,
                 pass: process.env.MAIL_PASSWORD,
             },
-        });
-    }
-
-    async sendTestEmail(): Promise<void> {
-        await this.transporter.sendMail({
-            from: process.env.MAIL_FROM,
-            to: "mujibworkoutsbt@gmail.com",
-            subject: "Nova Platforms - Test Email",
-            text: "Nodemailer is working successfully!",
         });
     }
 }

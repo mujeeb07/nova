@@ -1,10 +1,8 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import { Mail, ArrowRight } from "lucide-react";
 import { PasswordField } from "./PasswordField";
 import { useLogin } from "../hooks/useLogin";
 import type { RoleConfig } from "../../../config/roleConfig";
-
-import { useAuthStore } from "../../../store/authStore";
 
 interface LoginFormProps {
     config: RoleConfig;

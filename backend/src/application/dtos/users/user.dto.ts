@@ -1,32 +1,33 @@
-import {
-    IUser, 
-    IAddress, 
-    INotifications
-} from "../../../domain/entities/users/IUser";
+import { IUser, IAddress, INotifications } from "../../../domain/entities/users/IUser";
 
-export interface UserRegisterInputDTO { // register input.
+// register input.
+export interface UserRegisterInputDTO { 
     name: string;
     email: string;
     password: string;
 }
 
-export interface UserVerifyOtpInputDTO { // verify otp input.
+// verify otp input.
+export interface UserVerifyOtpInputDTO {
     email: string;
     otp: string;
 }
 
-export interface UserVerifyOtpOutputDTO { // verify otp output.
+// verify otp output.
+export interface UserVerifyOtpOutputDTO {
     user: IUser;
     accessToken: string;
     refreshToken: string;
 }
 
-export interface UserLoginInputDTO { // login input.
+// login input.
+export interface UserLoginInputDTO {
     email: string;
     password: string;
 }
 
-export interface UserLoginOutputDTO { // login output.
+// login output.
+export interface UserLoginOutputDTO { 
     user: {
         id: string;
         name: string;
@@ -43,17 +44,20 @@ export interface UserLoginOutputDTO { // login output.
     refreshToken: string;
 }
 
-export interface UserForgotPasswordInpnutDTO { // forgot password input.
+// forgot password input.
+export interface UserForgotPasswordInpnutDTO {
     email: string;
 }
 
-export interface UserResetPasswordInputDTO { // reset password input.
+// reset password input.
+export interface UserResetPasswordInputDTO { 
     email: string;
     otp: string;
     oldPassword: string;
     newPassword: string;
 }
 
-export interface UserResendOtpInputDTO { // resend otp input.
+// resend otp input.
+export interface UserResendOtpInputDTO {
     email: string;
 }

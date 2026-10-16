@@ -1,5 +1,4 @@
-import { IAdmin } from "../../../domain/entities/admin/IAdmin";
-
+import { IAdmin } from "../../../domain/entities/admins/IAdmin";
 
 export interface AdminLoginInputDTO {
     email: string;
@@ -7,11 +6,12 @@ export interface AdminLoginInputDTO {
 }
 
 export interface AdminLoginOutputDTO {
-    token: string;
-    admin: {
-        id: string;
-        name: string;
-        eamil: string;
-        role: string;
-    }
+    accessToken: string;
+    refreshToken: string;
+    admin: IAdmin;
 }
+
+export interface AdminForgotPasswordInputDTO {
+    email: string;
+}
+

@@ -4,9 +4,9 @@ import type { UserRegisterInputDTO } from "../../../dtos/users/user.dto";
 import type { IKeyValueRepository } from "../../../../domain/repositories/key_value/IOtpRepository";
 import { IPasswordService } from "../../../services/IPasswordService";
 import { generateOtp } from "../../../../utils/generateOtp";
-import { sendOtpEmail } from "../../../../infrastructure/services/otp_service";
 import { OTP_CONFIG } from "../../../../config/otp_config";
 import { BadRequestError, ConflictError } from "../../../../utils/errors";
+import { queueEmail } from "../../../../infrastructure/queues/emailQueue";
 
 export class UserRegisterUseCase implements IUserRegisterUseCase {
     constructor(
@@ -36,7 +36,7 @@ export class UserRegisterUseCase implements IUserRegisterUseCase {
         );
 
         try {
-            await sendOtpEmail(email, otp);
+            await queueEmail({email, otp});
         } catch (error: unknown) {
             throw new Error("OTP email failed");
         }
