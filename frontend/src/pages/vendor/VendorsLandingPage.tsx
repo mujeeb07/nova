@@ -1,9 +1,12 @@
 import React, { useState } from 'react';
-import { Users, Calendar, Truck, Quote } from 'lucide-react';
+import { Users, Calendar, Truck, Quote, Bell, ChevronDown } from 'lucide-react';
 import { BrandLogo } from '../../features/auth/components/BrandLogo';
-
+import { VENDOR_HERO, LANDING_IMG1, LANDING_IMG2, LANDING_IMG3 } from './vendorBanner';
+import { useAuthStore } from '../../store/authStore';
 
 export const VendorsLandingPage: React.FC = () => {
+  const vendor = useAuthStore((s) => s.session?.name) ?? "there";
+  console.log("vendor data from the store:", vendor)
   const [formData, setFormData] = useState({
     fullName: '',
     shopName: '',
@@ -33,18 +36,25 @@ export const VendorsLandingPage: React.FC = () => {
           <a href="#features" className="hover:text-[#00685D] transition-colors">Features</a>
           <a href="#case-studies" className="hover:text-[#00685D] transition-colors">Case Studies</a>
         </nav>
-        <button className="bg-[#00685D] hover:bg-[#00554c] text-white text-xs font-semibold px-5 py-2 rounded-lg shadow-xs transition-colors">
-          Sign Up
-        </button>
+        <div className="flex items-center gap-5">
+          <Bell className="w-4 h-4 text-slate-500 mr-0" />
+          <div className="flex items-center gap-2 cursor-pointer">
+            <img
+              src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=100&q=80"
+              alt="User Avatar"
+              className="w-7 h-7 rounded-full object-cover border border-[#E6F2FF]"
+            />
+          </div>
+        </div>
       </header>
 
       {/* 2. Hero Section */}
       <section className="relative min-h-[600px] flex items-center bg-white overflow-hidden">
         <div 
           className="absolute inset-0 bg-cover bg-center"
-          style={{ backgroundImage: `url('https://images.unsplash.com/photo-1545173168-9f1947eebb7f?auto=format&fit=crop&w=1600&q=80')` }}
+          style={{ backgroundImage: `url(${VENDOR_HERO})` }}
         />
-        <div className="absolute inset-0 bg-gradient-to-r from-[#F6FAF8] via-[#F6FAF8]/90 to-transparent" />
+        <div className="absolute inset-0 bg-gradient-to-r from-[#F6FAF8] via-[#F6FAF8]/70 to-transparent" />
 
         <div className="relative z-10 max-w-7xl mx-auto px-8 py-16 w-full">
           <div className="max-w-2xl space-y-6">
@@ -128,7 +138,7 @@ export const VendorsLandingPage: React.FC = () => {
             {/* Block 1 */}
             <div className="bg-white border border-[#BDC9C5]/40 rounded-xl overflow-hidden shadow-xs">
               <img 
-                src="https://images.unsplash.com/photo-1521656693074-0ef32e80a5d5?auto=format&fit=crop&w=600&q=80" 
+                src={`${LANDING_IMG1}`}
                 alt="Easy Pickup" 
                 className="w-full h-48 object-cover"
               />
@@ -141,7 +151,7 @@ export const VendorsLandingPage: React.FC = () => {
             {/* Block 2 */}
             <div className="bg-white border border-[#BDC9C5]/40 rounded-xl overflow-hidden shadow-xs">
               <img 
-                src="https://images.unsplash.com/photo-1517677208171-0bc6725a3e60?auto=format&fit=crop&w=600&q=80" 
+                src={`${LANDING_IMG2}`}
                 alt="Service Your Way" 
                 className="w-full h-48 object-cover"
               />
@@ -154,7 +164,7 @@ export const VendorsLandingPage: React.FC = () => {
             {/* Block 3 */}
             <div className="bg-white border border-[#BDC9C5]/40 rounded-xl overflow-hidden shadow-xs">
               <img 
-                src="https://images.unsplash.com/photo-1582735689369-4fe89db7114c?auto=format&fit=crop&w=600&q=80" 
+                src={`${LANDING_IMG3}`}
                 alt="Tidy Packaging" 
                 className="w-full h-48 object-cover"
               />
@@ -185,58 +195,6 @@ export const VendorsLandingPage: React.FC = () => {
               <p className="text-[11px] text-[#3E4946]">Owner, Sparkle Cleaners</p>
             </div>
           </div>
-        </div>
-      </section>
-
-      {/* 6. Call to Action Section */}
-      <section className="bg-[#F6FAF8] py-20 px-8">
-        <div className="max-w-7xl mx-auto bg-white border border-[#BDC9C5] shadow-xs rounded-xl p-8 sm:p-12 flex flex-col lg:flex-row items-center justify-between gap-12">
-          <div className="space-y-4 max-w-lg">
-            <h2 className="text-2xl sm:text-3xl font-bold text-[#181D1B] tracking-tight">
-              Ready to join the future of local laundry?
-            </h2>
-            <p className="text-sm text-[#3E4946] leading-relaxed">
-              Apply to be a Nova Local Vendor and expand your reach and income today.[cite: 9]
-            </p>
-          </div>
-
-          <form onSubmit={handleSubmit} className="w-full lg:w-auto flex-1 max-w-md space-y-4">
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-              <input 
-                type="text" 
-                name="fullName"
-                placeholder="Full Name"
-                value={formData.fullName}
-                onChange={handleChange}
-                required
-                className="w-full px-4 py-3 text-sm bg-white border border-[#BDC9C5] rounded-lg focus:outline-none focus:ring-2 focus:ring-[#00685D]"
-              />
-              <input 
-                type="text" 
-                name="shopName"
-                placeholder="Shop Name"
-                value={formData.shopName}
-                onChange={handleChange}
-                required
-                className="w-full px-4 py-3 text-sm bg-white border border-[#BDC9C5] rounded-lg focus:outline-none focus:ring-2 focus:ring-[#00685D]"
-              />
-            </div>
-            <input 
-              type="email" 
-              name="email"
-              placeholder="Email Address"
-              value={formData.email}
-              onChange={handleChange}
-              required
-              className="w-full px-4 py-3 text-sm bg-white border border-[#BDC9C5] rounded-lg focus:outline-none focus:ring-2 focus:ring-[#00685D]"
-            />
-            <button 
-              type="submit"
-              className="w-full bg-[#00685D] hover:bg-[#00554c] text-white text-xs font-semibold py-3.5 rounded-lg shadow-xs transition-colors"
-            >
-              Apply Now
-            </button>
-          </form>
         </div>
       </section>
 

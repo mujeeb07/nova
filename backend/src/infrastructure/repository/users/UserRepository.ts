@@ -6,8 +6,7 @@ import { IPasswordResettable } from "../../../domain/repositories/shared/IPasswo
 
 export class UserRepository 
 extends BaseRepository<IUser, IUserDocument> 
-implements IUserRepository, IPasswordResettable
-{
+implements IUserRepository, IPasswordResettable {
     constructor() {
         super(UserModel, (raw: any): IUser => ({
             id: raw._id.toString(),

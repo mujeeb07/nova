@@ -7,6 +7,6 @@ export const COOKIE_CONFIG = {
     REFRESH_TOKEN_MAX_AGE: Number(process.env.REFRESH_TOKEN_COOKIE_MAX_AGE) || 7 * 24 * 60 * 60 * 1000,
     HTTP_ONLY: true,
     SECURE: process.env.NODE_ENV === "production",
-    SAME_SITE: "lax" as const,
-    PATH: "/"
+    SAME_SITE: (process.env.COOKIE_SAME_SITE as "lax" | "none") || (process.env.NODE_ENV === "production" ? "none" : "lax"),
+    PATH: "/",
 };

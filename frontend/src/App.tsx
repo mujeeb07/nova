@@ -54,11 +54,11 @@ function App() {
       <Route path="/super-admin/login" element={<SuperAdminLoginPage />} />
       <Route element={<ProtectedRoute role="super_admin" loginPath="/super-admin/login" />}>
         <Route element={<DashboardLayout config={dashboardConfigs.super_admin} />}>
-          <Route path="/super-admin/overview" element={<SuperAdminOverviewPage />} />
+          {/* <Route path="/super-admin/overview" element={<SuperAdminOverviewPage />} /> */}
           {dashboardConfigs.super_admin.nav
             .filter(
               (n) => 
-              n.path !== "/super-admin/overview" && 
+              // n.path !== "/super-admin/overview" && 
               n.path !== "/super-admin/vendors" &&
               n.path !== "/super-admin/users"
             )

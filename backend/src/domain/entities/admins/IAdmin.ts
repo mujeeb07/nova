@@ -2,7 +2,8 @@ export enum ROLE {
     ADMIN = "admin",
     SUPER_ADMIN = "super_admin"
 }
-import { AccountRole } from "../../../application/services/ITokenService";
+
+
 export enum PERMISSIONS {
     CUSTOMER_SUPPORT = "CUSTOMER_SUPPORT",
     DELIVERY_PARTNER_SUPPORT = "DELIVERY_PARTNER_SUPPORT",
@@ -19,7 +20,7 @@ export interface IAdmin {
     name: string;
     email: string;
     passwordHash: string;
-    role: AccountRole;
+    role: ROLE;
     status: STATUS;
     lastLoginAt: Date | null;
     createdAt: Date;

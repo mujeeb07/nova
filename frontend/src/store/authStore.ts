@@ -16,7 +16,7 @@ export const useAuthStore = create<AuthState>((set) => ({
     isChecking: true,
     setSession: (data, role) =>{
         const account = data.admin ?? data.user ?? data.vendor;
-
+        console.log(account)
     set({
         session: account
             ? {

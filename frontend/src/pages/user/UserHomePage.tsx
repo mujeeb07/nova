@@ -127,7 +127,7 @@ export const UserHomePage: React.FC = () => {
           }}
         />
         {/* Gradient Overlay for text readability */}
-        <div className="absolute inset-0 bg-gradient-to-r from-[#F9F9FF]/95 via-[#F9F9FF]/75 to-transparent" />
+        <div className="absolute inset-0 bg-gradient-to-r from-[#F9F9FF]/95 via-[#F9F9FF]/65 to-transparent" />
 
         {/* Floating UI Badges on Hero */}
         <div className="hidden lg:flex absolute top-16 right-24 bg-white/90 backdrop-blur-md border border-white/40 shadow-sm rounded-full px-4 py-2 items-center gap-2 z-10">

@@ -2,8 +2,9 @@ import type { IAdminRepository } from "../../../../domain/repositories/admin/IAd
 import type { IPasswordService } from "../../../services/IPasswordService";
 import type { IAdminLoginUseCase } from "../../../interfaces/admin/IAdminUseCase";
 import { AdminLoginInputDTO, AdminLoginOutputDTO } from "../../../dtos/admin/admin.dto";
-import { AccountRole, ITokenService } from "../../../services/ITokenService";
+import { ITokenService } from "../../../services/ITokenService";
 import { ForbiddenError, UnauthorizedError } from "../../../../utils/errors";
+import { ROLE } from "../../../../domain/entities/admins/IAdmin";
 
 export class AdminLoginUseCase implements IAdminLoginUseCase {
     constructor(
@@ -22,7 +23,7 @@ export class AdminLoginUseCase implements IAdminLoginUseCase {
 
         await this._adminRepository.update(admin.id, { lastLoginAt: new Date() });
 
-        const role = (admin.role?.toLowerCase() ?? "super_admin") as AccountRole;
+        const role = (admin.role?.toLowerCase() ?? "super_admin") as ROLE;
         const accessToken = this._tokenService.signAccessToken({ accountId: admin.id, role });
         const refreshToken = this._tokenService.signRefreshToken({ accountId: admin.id, role });
 
