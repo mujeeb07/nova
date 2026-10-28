@@ -14,6 +14,7 @@ export class AdminRepository
             email: raw.email,
             passwordHash: raw.passwordHash,
             role: (raw.role?.toLowerCase() ?? ROLE.SUPER_ADMIN) as ROLE,
+            permissions: raw.permissions,
             status: raw.status,
             lastLoginAt: raw.lastLoginAt,
             createdAt: raw.createdAt,
@@ -39,7 +40,6 @@ export class AdminRepository
         await this.model.updateOne({ _id: id }, { $set: { lastLoginAt: new Date() } });
     }
 
-
     async findAccountByEmail(email: string): Promise<string | null> {
         const doc = await this.model.findOne({ email: email.toLowerCase().trim() }).select("_id");
         return doc ? doc._id.toString() : null;
@@ -49,4 +49,6 @@ export class AdminRepository
         const r = await this.model.updateOne({ _id: accountId }, { $set: { passwordHash } });
         if (r.matchedCount === 0) throw new Error("Account not found while updating password");
     }
+
+
 }

@@ -6,8 +6,15 @@ import { StatusBadge } from "../../features/dashboard/components/StatusBadge";
 import { useAdminList } from "../../features/dashboard/hooks/useAdminList";
 
 interface VendorRow {
-    id: string; shopName: string; ownerName: string; email: string; phone: string;
-    city: string; rating: number; status: string; verificationStatus: string;
+    id: string; 
+    shopName: string; 
+    ownerName: string; 
+    email: string; 
+    phone: string;
+    city: string; 
+    rating: number; 
+    status: string; 
+    verificationStatus: string;
 }
 
 function vendorBadge(v: VendorRow) {

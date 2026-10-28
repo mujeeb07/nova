@@ -12,6 +12,8 @@ import { VerifyForgotPasswordOtpUseCase } from "../../../application/use_cases/s
 import { CreateNewPasswordUseCase } from "../../../application/use_cases/shared/auth/CreateNewPasswordUseCase";
 import { sendSuccess } from "../../../utils/apiResponse";
 import { authenticateSuperAdmin } from "../../middlewares/guards";
+import rateLimit from "express-rate-limit";
+import { invitationController } from "./adminInvitationRoutes";
 
 
 const adminRouter = Router();
@@ -54,6 +56,10 @@ adminRouter.get("/me", authenticateSuperAdmin, async (req, res) => {
  
 adminRouter.post("/forgot-password", adminForgotPasswordController.sendOtp);
 adminRouter.post("/forgot-password/verify", adminForgotPasswordController.verifyOtp);
-adminRouter.post("/forgot-password/create", adminForgotPasswordController.createPassword)
+adminRouter.post("/forgot-password/create", adminForgotPasswordController.createPassword);
+
+const invitationLimiter = rateLimit({ windowMs: 15 * 60 * 1000, limit: 10, standardHeaders: true, legacyHeaders: false });
+adminRouter.post("/invitations/validate", invitationLimiter, invitationController.validate);
+adminRouter.post("/invitations/accept", invitationLimiter, invitationController.accept);
 
 export { adminRouter };

@@ -3,7 +3,6 @@ export enum ROLE {
     SUPER_ADMIN = "super_admin"
 }
 
-
 export enum PERMISSIONS {
     CUSTOMER_SUPPORT = "CUSTOMER_SUPPORT",
     DELIVERY_PARTNER_SUPPORT = "DELIVERY_PARTNER_SUPPORT",
@@ -21,6 +20,7 @@ export interface IAdmin {
     email: string;
     passwordHash: string;
     role: ROLE;
+    permissions: PERMISSIONS[];
     status: STATUS;
     lastLoginAt: Date | null;
     createdAt: Date;

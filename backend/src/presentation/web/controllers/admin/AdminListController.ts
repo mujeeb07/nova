@@ -16,4 +16,6 @@ export class AdminListController {
 
     users = asyncHandlor(async (req: Request, res: Response) => 
         sendSuccess(res, await this._listUsers.execute(parseListQuery(req.query)), "OK" ));
+
+    // admins = asyncHandlor()
 }

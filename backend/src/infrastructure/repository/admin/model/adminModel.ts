@@ -15,6 +15,7 @@ const adminSchema = new Schema<IAdminDocument>({
 }, {timestamps: true});
 
 adminSchema.index({ role: 1});
+adminSchema.index({ email: 1});
 
 export const AdminModel = mongoose.model<IAdminDocument>('Admin', adminSchema);
 

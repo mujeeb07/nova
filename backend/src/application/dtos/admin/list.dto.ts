@@ -5,6 +5,7 @@ export interface VendorRowDTO {
     id: string; shopName: string; ownerName: string; email: string; phone: string;
     city: string; rating: number; status: string; verificationStatus: string;
 }
+
 export interface UserRowDTO {
     id: string; name: string; email: string; phone: string | null; isVerified: boolean; status: "ACTIVE" | "BLOCKED";
 }

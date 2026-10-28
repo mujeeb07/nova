@@ -1,4 +1,4 @@
-import { AdminForgotPasswordInputDTO, AdminLoginInputDTO, AdminLoginOutputDTO } from "../../dtos/admin/admin.dto";
+import { AdminForgotPasswordInputDTO, AdminInviteInputDTO, AdminLoginInputDTO, AdminLoginOutputDTO } from "../../dtos/admin/admin.dto";
 
 // login.
 export interface IAdminLoginUseCase {
@@ -13,4 +13,9 @@ export interface IAdminLogoutUseCase {
 // forgot_password.
 export interface IAdminForgotPasswordUseCase {
     execute(input: AdminForgotPasswordInputDTO): Promise<void>
+}
+
+// invite new admin.
+export interface IAdminInviteUseCase {
+    execute(input: AdminInviteInputDTO): Promise<void>
 }

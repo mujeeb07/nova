@@ -106,5 +106,6 @@ const vendorSchema = new Schema<IVendorDocument>(
 
 vendorSchema.index({ "addresses.location":"2dsphere" });
 vendorSchema.index({ status:1, isFeatured: 1 });
+vendorSchema.index({ email: 1 });
 
 export const VendorModel = mongoose.model<IVendorDocument>("vendor", vendorSchema);

@@ -15,3 +15,7 @@ export interface AdminForgotPasswordInputDTO {
     email: string;
 }
 
+export interface AdminInviteInputDTO {
+    email: string;
+    permissions:string[];
+}

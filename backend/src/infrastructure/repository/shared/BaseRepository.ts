@@ -36,4 +36,10 @@ export class BaseRepository<TDomain, TDbDoc> implements IBaseRepository<TDomain>
     ]);
     return { items: docs.map((d) => this.mapper(d)), total }
   }
+
+  async findByEmail(email: string): Promise<TDomain | null> {
+    const doc = await this.model.findOne({ email: email });
+    if(!doc) return null;
+    return this.mapper(doc);
+  }
 }

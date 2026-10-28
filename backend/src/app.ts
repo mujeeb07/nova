@@ -23,7 +23,6 @@ app.use("/api/v1/auth/super-admin", adminRouter);
 app.use("/api/v1/auth/user", userRouter);
 app.use("/api/v1/auth/vendor", vendorRouter);
 
-
 app.use(errorHandler);
 
 export default app;
