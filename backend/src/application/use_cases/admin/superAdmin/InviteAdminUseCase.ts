@@ -3,12 +3,10 @@ import { IAdminInvitationStore } from "../../../../domain/repositories/admin/sup
 import { IInviteTokenGenerator } from "../../../services/IInviteTokenGenerator";
 import { IAdminInviteMailQueue } from "../../../services/IAdminInviteMailQueue";
 import { InviteAdminInputDTO, InviteAdminOutputDTO } from "../../../dtos/admin/superAdmin/invitation.dto"
-import { PERMISSIONS, ROLE, STATUS } from "../../../../domain/entities/admins/IAdmin";
-import { AppError, BadRequestError, ConflictError, ForbiddenError } from "../../../../utils/errors";
-import { HttpStatus } from "../../../../utils/httpStatus";
+import { PERMISSIONS, ROLE } from "../../../../domain/entities/admins/IAdmin";
 import { INVITE_CONFIG } from "../../../../config/invite_config";
-
-const EMAIL_RX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+import { isValidEmail } from "../../../../utils/listFilter";
+import { AppError } from "../../../../utils/errors/AppError";
 
 export class InviteAdminUseCase {
     constructor(
@@ -20,20 +18,20 @@ export class InviteAdminUseCase {
 
     async execute(input: InviteAdminInputDTO): Promise<InviteAdminOutputDTO> {
         const email = String(input.email ?? "").toLowerCase().trim();
-        if (!EMAIL_RX.test(email)) throw new BadRequestError("A valid email is required");
+        if (!isValidEmail(email)) throw new AppError("A valid email is required", 400);
 
         const allowed = new Set<string>(Object.values(PERMISSIONS));
         const permissions = [...new Set(input.permissions ?? [])];
-        if (permissions.length === 0) throw new BadRequestError("Select at least one permission");
-        if (permissions.some((p) => !allowed.has(p))) throw new BadRequestError("Invalid permission selected");
+        if (permissions.length === 0) throw new AppError("Select at least one permission", 400);
+        if (permissions.some((p) => !allowed.has(p))) throw new AppError("Invalid permission selected", 400);
 
         const inviter = await this._adminRepository.findById(input.inviterId);
-        if (!inviter || inviter.role !== ROLE.SUPER_ADMIN || inviter.status !== STATUS.ACTIVE) {
-            throw new ForbiddenError("Only an active super admin can invite admins");
+        if (!inviter || inviter.role !== ROLE.SUPER_ADMIN || !inviter.status) {
+            throw new AppError("Only an active super admin can invite admins", 403);
         }
 
         if (await this._adminRepository.findByEmail(email)) {
-            throw new ConflictError("An admin with this email already exists");
+            throw new AppError("An admin with this email already exists", 409);
         }
 
         const token = this._tokens.generate();
@@ -47,15 +45,14 @@ export class InviteAdminUseCase {
         };
 
         const created = await this._store.create(token, invitation, INVITE_CONFIG.TTL_SECONDS);
-        if (!created) throw new ConflictError("A pending invitation already exists for this email");
+        if (!created) throw new AppError("A pending invitation already exists for this email", 409);
 
         try {
             await this._mailQueue.enqueue({ email, token });
         } catch {
             await this._store.revoke(token).catch(() => undefined);
-            throw new AppError("Could not queue the invitation email. Please try again.", HttpStatus.BAD_GATEWAY);
         }
-
+        
         return { email, expiresAt: invitation.expiresAt, emailStatus: "queued" };
     }
 }

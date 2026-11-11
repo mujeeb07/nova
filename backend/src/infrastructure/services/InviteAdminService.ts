@@ -1,6 +1,6 @@
 import nodemailer from "nodemailer";
 
-export const sendInvitationEmail = async (email: string) => {
+export const sendInvitationAdminEmail = async (email: string, link: string) => {
     const user = process.env.MAIL_USER;
     const pass = process.env.MAIL_PASSWORD;
 
@@ -30,7 +30,7 @@ export const sendInvitationEmail = async (email: string) => {
 
         To accept the invitation and set up your account password, click the button below.
         Accept Invitation & Set Password
-        {{invitation_link}}
+        ${link}
         You will be asked to create a password and confirm it to complete your account setup.
 
         Important:
@@ -44,6 +44,4 @@ export const sendInvitationEmail = async (email: string) => {
         Nova Team
         Nova Platform Administration`
     })
-
-
 }

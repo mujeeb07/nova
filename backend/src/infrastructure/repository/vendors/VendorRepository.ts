@@ -6,6 +6,7 @@ import { IVendor } from "../../../domain/entities/vendors/IVendor";
 import { Types } from "mongoose";
 import { toVendorDomain } from "./vendorMapper";
 import { IPasswordResettable } from "../../../domain/repositories/shared/IPasswordResettable";
+import { AppError } from "../../../utils/errors/AppError";
 
 export class VendorRepository 
     extends BaseRepository<IVendor, IVendorDocument> 
@@ -28,6 +29,13 @@ export class VendorRepository
 
     async updatePasswordHash(accountId: string, passwordHash: string): Promise<void> {
         await VendorModel.updateOne({ accountId }, { $set: { passwordHash } });
+    }
+
+    async updateStatus(id: string, status: boolean): Promise<IVendor | null> {
+        const doc = await VendorModel.findByIdAndUpdate(id, {$set: {status}}, {new: true});
+        // console.log(`Vendor Id: ${id} - vendor status: ${status}`)
+        if(!doc) throw new AppError("update Status failed: vendor not found", 404);
+        return this.mapper(doc);
     }
 
 

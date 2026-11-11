@@ -4,11 +4,10 @@ import { IAdminInvitationStore } from "../../domain/repositories/admin/superAdmi
 import { INVITE_CONFIG } from "../../config/invite_config";
 import { logger } from "../logger/logger";
 import { connection } from "../config/config.queue";
-export type SendMail = (to: string, subject: string, html: string) => Promise<void>;
+import { sendInvitationAdminEmail } from "../services/InviteAdminService";
 
 export function startAdminInviteWorker(
     store: IAdminInvitationStore,
-    sendMail: SendMail
 ) {
     const worker = new Worker<{ email: string; token: string }>(
         ADMIN_INVITE_QUEUE,
@@ -19,13 +18,7 @@ export function startAdminInviteWorker(
             if (!(await store.find(token))) return;
 
             const link = `${INVITE_CONFIG.FRONTEND_URL}${INVITE_CONFIG.ACCEPT_PATH}?token=${encodeURIComponent(token)}`;
-            await sendMail(
-                email,
-                "You've been invited to Nova Admin",
-                `<p>You have been invited to join Nova as an admin.</p>
-                 <p><a href="${link}">Accept invitation and set your password</a></p>
-                 <p>This link expires 2 days after it was issued and can be used once.</p>`
-            );
+            await sendInvitationAdminEmail(email, link);
         },
         { connection, concurrency: 5 }
     );
@@ -36,7 +29,7 @@ export function startAdminInviteWorker(
         logger.warn({ jobId: job.id, attempt: job.attemptsMade, reason: err.message }, "Invite email attempt failed");
         if (job.attemptsMade >= MAIL_ATTEMPTS) {
             await store.revoke(job.data.token).catch(() => undefined);
-            logger.error({ jobId: job.id }, "Invite email failed permanently; invitation revoked");
+            logger.error({ jobId: job.id }, "Invite email failed permanently, invitation revoked");
         }
     });
 

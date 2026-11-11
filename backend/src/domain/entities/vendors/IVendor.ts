@@ -23,7 +23,7 @@ export interface IWorkingHours {
     workingDays: WeekDay[];
 }
 
-export type VendorStatus = "pending" | "active" | "suspended" | "rejected";
+export type VendorStatus = boolean;
 export type VerificationStatus = "unsubmitted" | "under_review" | "verified" | "rejected";
 
 export type IRatingDistribution = Record< 1 | 2 | 3 | 4 | 5, number >;
@@ -47,7 +47,7 @@ export interface IVendor {
     workingHours: IWorkingHours | null;
     dailyOrderCapacity: number;
     currentSubscriptionId: string | null;
-    status: VendorStatus;
+    status: boolean;
     verificationStatus: VerificationStatus;
     verificationDocuments: string[];
     rejectionReason: string | null;

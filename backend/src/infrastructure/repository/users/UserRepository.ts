@@ -3,6 +3,7 @@ import { IUserRepository } from "../../../domain/repositories/users/IUserReposit
 import { IUser } from "../../../domain/entities/users/IUser";
 import { IUserDocument, UserModel } from "./model/userModel";
 import { IPasswordResettable } from "../../../domain/repositories/shared/IPasswordResettable";
+import { AppError } from "../../../utils/errors/AppError";
 
 export class UserRepository 
 extends BaseRepository<IUser, IUserDocument> 
@@ -28,8 +29,6 @@ implements IUserRepository, IPasswordResettable {
 
     async findByEmail(email: string): Promise<IUser | null> {
         const doc = await this.model.findOne({ email:email }).lean();
-
-        console.log("DOC:",doc)
         if(!doc) return null;
         return this.mapper(doc);
     }
@@ -42,9 +41,17 @@ implements IUserRepository, IPasswordResettable {
 
     // set new password
     async updatePasswordHash(accountId: string, passwordHash: string): Promise<void> {
-        const result = await UserModel.updateOne({ _id: accountId }, { $set: { passwordHash } });
-        if (result.matchedCount === 0) {
-            throw new Error("Account not found while updating password");
+        const doc = await UserModel.updateOne({ _id: accountId }, { $set: { passwordHash } });
+        if (doc.matchedCount === 0) {
+            throw new AppError("Account not found while updating password", 404);
         }
+    }
+
+    async updateStatus(id: string, status: boolean): Promise<IUser | null> {
+        const doc = await UserModel.findByIdAndUpdate(id, {$set: {status}}, {new: true});
+        if(!doc) {
+            throw new AppError("update Status failed: User not found", 404);
+        }
+        return this.mapper(doc);
     }
 }

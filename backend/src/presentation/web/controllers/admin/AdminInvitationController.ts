@@ -5,7 +5,7 @@ import { AcceptInvitationUseCase } from "../../../../application/use_cases/admin
 import { asyncHandlor } from "../../../../utils/errors/asyncHandlor";
 import { sendSuccess } from "../../../../utils/apiResponse";
 import { HttpStatus } from "../../../../utils/httpStatus";
-import { BadRequestError, UnauthorizedError } from "../../../../utils/errors";
+import { AppError } from "../../../../utils/errors/AppError";
 
 export class AdminInvitationController {
     constructor(
@@ -15,9 +15,9 @@ export class AdminInvitationController {
     ) {}
 
     invite = asyncHandlor(async (req: Request, res: Response) => {
-        if (!req.accountId) throw new UnauthorizedError("Not logged in");
+        if (!req.accountId) throw new AppError("Not logged in", 401);
         const { email, permissions } = req.body;
-        if (!email || !Array.isArray(permissions)) throw new BadRequestError("Email and permissions are required");
+        if (!email || !Array.isArray(permissions)) throw new AppError("Email and permissions are required", 400);
 
         const result = await this._invite.execute({ inviterId: req.accountId, email, permissions });
         sendSuccess(res, result, "Invitation created. The email has been queued for delivery.", HttpStatus.ACCEPTED);

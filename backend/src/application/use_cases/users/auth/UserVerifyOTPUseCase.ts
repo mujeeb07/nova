@@ -2,8 +2,7 @@ import type { IUserRepository } from "../../../../domain/repositories/users/IUse
 import type { IKeyValueRepository } from "../../../../domain/repositories/key_value/IOtpRepository";
 import { IUserVerifyOtpUseCase } from "../../../interfaces/users/IUserUseCase";
 import { UserVerifyOtpInputDTO } from "../../../dtos/users/user.dto";
-import { BadRequestError, ConflictError } from "../../../../utils/errors";
-
+import { AppError } from "../../../../utils/errors/AppError";
 
 export class UserVerifyOtpUseCase implements IUserVerifyOtpUseCase {
     constructor(
@@ -12,10 +11,7 @@ export class UserVerifyOtpUseCase implements IUserVerifyOtpUseCase {
     ){}
 
     async execute(input:UserVerifyOtpInputDTO): Promise<void> {
-
         const { email, otp } = input;
-        console.log("Input:", input);
-        console.log(email);
 
         let userData = await this._keyValueRepository.get(`otp:register:user:${email}`) as any;
      
@@ -25,21 +21,20 @@ export class UserVerifyOtpUseCase implements IUserVerifyOtpUseCase {
         const userInputOtp = otp;
 
         if(!userData || userData.otp !== userInputOtp) {
-            throw new BadRequestError("Invalid or expired OTP");
+            throw new AppError("Invalid or expired OTP", 400);
         }
 
         const existing = await this._userRepository.findByEmail(email);
         if(existing) {
             await this._keyValueRepository.del(`otp:register:user:${email}`);
-            throw new ConflictError("An account with this email already exists, please login!");
+            throw new AppError("An account with this email already exists, please login!", 409);
         }
       
-        if(!userData) throw new BadRequestError("user data not available");
+        if(!userData) throw new AppError("user data not available", 400);
 
         const savedUser = userData;
 
         await this._userRepository.create({...savedUser, passwordHash:savedUser.password, isVerified: true, phone: null});
         await this._keyValueRepository.del(`pending:register:user:${email}`);
-        console.log("User data saved successfully");
     }
 }

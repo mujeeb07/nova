@@ -1,5 +1,5 @@
 import mongoose, { Schema,Types } from "mongoose";
-import { IAdmin , ROLE, STATUS } from "../../../../domain/entities/admins/IAdmin";
+import { IAdmin , ROLE } from "../../../../domain/entities/admins/IAdmin";
 
 export interface IAdminDocument extends Omit<IAdmin,"id">{
      _id: Types.ObjectId;
@@ -10,7 +10,7 @@ const adminSchema = new Schema<IAdminDocument>({
     email: { type: String, required: true, unique: true, lowercase: true, trim: true },
     passwordHash: { type: String, required: true, select: false },
     role: { type: String, enum: Object.values(ROLE), required: true, default: ROLE.SUPER_ADMIN },
-    status: { type: String, enum: Object.values(STATUS), default: STATUS.ACTIVE, required: true },
+    status: { type: Boolean, default: false, required: true },
     lastLoginAt: { type: Date, default: null }
 }, {timestamps: true});
 

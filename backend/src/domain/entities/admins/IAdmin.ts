@@ -9,11 +9,6 @@ export enum PERMISSIONS {
     VENDOR_SUPPORT = "VENDOR_SUPPORT"
 }
 
-export enum STATUS {
-    ACTIVE = "ACTIVE",
-    SUSPENDED = "SUSPENDED"
-}
-
 export interface IAdmin {
     id: string;
     name: string;
@@ -21,7 +16,7 @@ export interface IAdmin {
     passwordHash: string;
     role: ROLE;
     permissions: PERMISSIONS[];
-    status: STATUS;
+    status: boolean;
     lastLoginAt: Date | null;
     createdAt: Date;
     updatedAt: Date;

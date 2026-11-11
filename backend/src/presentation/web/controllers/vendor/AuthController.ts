@@ -5,10 +5,9 @@ import {
     IVendorVerifyOtpUseCase
 } from "../../../../application/interfaces/vendors/IVendorUseCase";
 import { COOKIE_CONFIG } from "../../../../config/cookie_config";
-import { HttpStatus } from "../../../../utils/httpStatus";
 import { asyncHandlor } from "../../../../utils/errors/asyncHandlor";
-import { BadRequestError } from "../../../../utils/errors";
 import { sendSuccess } from "../../../../utils/apiResponse";
+import { AppError } from "../../../../utils/errors/AppError";
 
 export class AuthController {
     constructor(
@@ -20,7 +19,7 @@ export class AuthController {
     // login.
     login = asyncHandlor(async (req: Request, res: Response) => {
         const { email, password } = req.body;
-        if(!email || !password) throw new BadRequestError("All fields are required");
+        if(!email || !password) throw new AppError("All fields are required", 400);
 
         const result = await this._loginUseCase.execute({ email, password });
         res.cookie("accessToken", result.accessToken, {
@@ -43,7 +42,7 @@ export class AuthController {
     register =asyncHandlor(async(req: Request, res: Response) => {
         const { email, password, shopName, ownerName, phone } = req.body;
         if( !email || !password || !shopName || !ownerName || !phone ) {
-            throw new BadRequestError("All fields are required");
+            throw new AppError("All fields are required", 400);
         }
 
         const result = await this._registerUseCase.execute({ email, password, shopName, ownerName, phone });

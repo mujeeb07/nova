@@ -6,9 +6,9 @@ import {
 } from "../../../../application/interfaces/users/IUserUseCase";
 import { COOKIE_CONFIG } from "../../../../config/cookie_config";
 import { asyncHandlor } from "../../../../utils/errors/asyncHandlor";
-import { BadRequestError } from "../../../../utils/errors";
 import { sendSuccess } from "../../../../utils/apiResponse";
 import { UserGoogleLoginUseCase } from "../../../../application/use_cases/users/auth/UserGoogleLoginUseCase";
+import { AppError } from "../../../../utils/errors/AppError";
 
 
 export class AuthController {
@@ -23,7 +23,7 @@ export class AuthController {
     register = asyncHandlor(async (req: Request, res: Response) => {
         const { name, email, password } = req.body;
         if(!name || !email || !password) {
-            throw new BadRequestError("All fields are required.")
+            throw new AppError("All fields are required.", 400)
         }
         const result = await this._registerUseCase.execute({ name, email, password });
         sendSuccess(res, result, "An otp has been send to the email")
@@ -40,7 +40,7 @@ export class AuthController {
     login = asyncHandlor(async (req: Request, res: Response): Promise<void> => {
         const { email, password } = req.body;
 
-        if(!email || !password)  throw new BadRequestError("Email and Password is required");
+        if(!email || !password)  throw new AppError("Email and Password is required", 400);
 
         const result = await this._loginUseCase.execute({ email, password });
 
@@ -65,7 +65,7 @@ export class AuthController {
     // GOOGLE LOGIN.
     googleLogin = asyncHandlor(async (req: Request, res: Response) => {
         const { googleAccessToken } = req.body;
-        if (!googleAccessToken) throw new BadRequestError("Google token is required");
+        if (!googleAccessToken) throw new AppError("Google token is required", 400);
 
         const result = await this._googleLoginUseCase.execute(googleAccessToken);
         res.cookie("accessToken", result.accessToken, {

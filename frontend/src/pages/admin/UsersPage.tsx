@@ -4,6 +4,8 @@ import { DataTable, type Column } from "../../features/dashboard/components/Data
 import { ListToolbar } from "../../features/dashboard/components/ListToolbar";
 import { StatusBadge } from "../../features/dashboard/components/StatusBadge";
 import { useAdminList } from "../../features/dashboard/hooks/useAdminList";
+import { ListStatusControl } from "../../features/dashboard/components/ListStatusControl";
+import { useToggleUserStatus } from "../../features/dashboard/hooks/useToggleUserStatus";
 
 interface UserRow {
     id: string;
@@ -14,43 +16,75 @@ interface UserRow {
     status: "ACTIVE" | "BLOCKED";
 }
 
-const columns: Column<UserRow>[] = [
-    {
-        header: "User",
-        render: (u) => (
-            <>
-                <div className="font-medium">{u.name}</div>
-                <div className="text-[11px] text-slate-500">{u.email}</div>
-            </>
-        ),
-    },
-    { header: "Phone", render: (u) => u.phone ?? "-" },
-    {
-        header: "Email verified",
-        render: (u) =>
-            u.isVerified
-                ? <StatusBadge label="Verified" tone="green" />
-                : <StatusBadge label="Not verified" tone="amber" />,
-    },
-    {
-        header: "Status",
-        render: (u) =>
-            u.status === "ACTIVE"
-                ? <StatusBadge label="Active" tone="green" />
-                : <StatusBadge label="Blocked" tone="red" />,
-    },
-];
-
 const STATUS_OPTIONS = [
-    { value: "ACTIVE", label: "Active" },
-    { value: "BLOCKED", label: "Blocked" },
+    { value: "true", label: "Active" },
+    { value: "false", label: "Blocked" },
 ];
 
 export default function UsersPage() {
     const [page, setPage] = useState(1);
     const [search, setSearch] = useState("");
     const [status, setStatus] = useState("");
-    const { data, isLoading } = useAdminList<UserRow>("users", { page, search, status });
+    const [loadingMap, setLoadingMap] = useState<Record<string, boolean>>({});
+
+    const { data, isLoading, refetch } = useAdminList<UserRow>("users", { page, search, status });
+
+    const { mutateAsync: toggleStatus } = useToggleUserStatus();
+
+    const handleToggleStatus = async (
+        userId: string, 
+        nextState: boolean 
+    ): Promise <void> => {
+        setLoadingMap((prev) => ({ ...prev, [userId]: true }));
+
+        try {
+            await toggleStatus({userId, isActive: nextState});
+            await refetch(); 
+        } catch (error) {
+            console.error("Failed to update user status:", error);
+        } finally {
+            setLoadingMap((prev) => ({ ...prev, [userId]: false }));
+        }
+    };
+
+    const columns: Column<UserRow>[] = [
+        {
+            header: "User",
+            render: (u) => (
+                <>
+                    <div className="font-medium">{u.name}</div>
+                    <div className="text-[11px] text-slate-500">{u.email}</div>
+                </>
+            ),
+        },
+        { header: "Phone", render: (u) => u.phone ?? "-" },
+        {
+            header: "Email verified",
+            render: (u) => u.isVerified 
+                    ? <StatusBadge label="Verified" tone="green" /> 
+                    : <StatusBadge label="Not verified" tone="amber" />
+        },
+        {
+            header: "Status",
+            render: (u) =>
+                u.status === "ACTIVE"
+                    ? <StatusBadge label="Active" tone="green" />
+                    : <StatusBadge label="Blocked" tone="red" />
+        },
+        {
+            header: "Actions",
+            render: (u) => (
+                <ListStatusControl
+                    mode="toggle"
+                    isActive={u.status === "ACTIVE"}
+                    activeLabel="Block"
+                    inactiveLabel="Unblock"
+                    isLoading={loadingMap[u.id] || false}
+                    onChange={(nextStatus) => handleToggleStatus(u.id, nextStatus)}
+                />
+            ),
+        },
+    ];
 
     return (
         <>

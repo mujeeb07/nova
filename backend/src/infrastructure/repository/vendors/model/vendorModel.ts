@@ -82,10 +82,10 @@ const vendorSchema = new Schema<IVendorDocument>(
 
         currentSubscriptionId: { type: String, default: null },
         status: { 
-            type: String, 
-            enum: ["pending", "active", "suspended", "rejected"], 
-            required: true, 
-            default: "pending" 
+            type: Boolean, 
+            // enum: ["pending", "active", "suspended", "rejected"], 
+            // required: true, 
+            default: true
         },
         verificationStatus: {
             type: String,

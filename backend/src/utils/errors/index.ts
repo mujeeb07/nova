@@ -1,24 +1,24 @@
-import { HttpStatus } from "../httpStatus";
-import { AppError } from "./AppError";
+// import { HttpStatus } from "../httpStatus";
+// import { AppError } from "./AppError";
 
-export class BadRequestError extends AppError {
-    constructor(message = "Bad reqeust") { super(message, HttpStatus.BAD_REQUEST); }
-}
+// export class BadRequestError extends AppError {
+//     constructor(message = "Bad reqeust") { super(message, HttpStatus.BAD_REQUEST); }
+// }
 
-export class UnauthorizedError extends AppError {
-    constructor(message = "UnAuthorized") { super(message, HttpStatus.UNAUTHORIZED); }
-}
+// export class UnauthorizedError extends AppError {
+//     constructor(message = "UnAuthorized") { super(message, HttpStatus.UNAUTHORIZED); }
+// }
 
-export class ForbiddenError extends AppError {
-    constructor(message = "Forbiddon") { super(message, HttpStatus.FORBIDDEN); }
-}
+// export class ForbiddenError extends AppError {
+//     constructor(message = "Forbiddon") { super(message, HttpStatus.FORBIDDEN); }
+// }
 
-export class NotFoundError extends AppError {
-    constructor(message = "Not found") { super(message, HttpStatus.NOT_FOUND); }
-}
+// export class NotFoundError extends AppError {
+//     constructor(message = "Not found") { super(message, HttpStatus.NOT_FOUND); }
+// }
 
-export class ConflictError extends AppError {
-    constructor(message = "Conflict") { super(message, HttpStatus.CONFLICT); }
-}
+// export class ConflictError extends AppError {
+//     constructor(message = "Conflict") { super(message, HttpStatus.CONFLICT); }
+// }
 
-export { AppError }
+// export { AppError }

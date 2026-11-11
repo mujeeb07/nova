@@ -3,8 +3,8 @@ import { TokenService } from "../../infrastructure/services/TokenService";
 import { authenticate } from "../middlewares/authenticate";
 import { sendSuccess } from "../../utils/apiResponse";
 import { COOKIE_CONFIG } from "../../config/cookie_config";
-import { UnauthorizedError } from "../../utils/errors";
 import { AccountRole } from "../../application/services/ITokenService";
+import { AppError } from "../../utils/errors/AppError";
 
 const authRouter = Router();
 const tokenService = new TokenService();
@@ -29,16 +29,16 @@ authRouter.get("/logout", logoutHandler);
 
 authRouter.post("/refresh", (req: Request, res: Response) => {
     const refreshToken = req.cookies?.refreshToken;
-    console.log("RefreshToken:", refreshToken)
+    // console.log("RefreshToken:", refreshToken)
     if (!refreshToken) {
-        throw new UnauthorizedError("Refresh token missing");
+        throw new AppError("Refresh token missing", 401);
     }
 
     let payload;
     try {
         payload = tokenService.verifyRefreshToken(refreshToken);
     } catch {
-        throw new UnauthorizedError("Invalid or expired refresh token");
+        throw new AppError("Invalid or expired refresh token", 401);
     }
 
     const newAccessToken = tokenService.signAccessToken({

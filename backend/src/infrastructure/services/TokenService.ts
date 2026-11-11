@@ -6,6 +6,7 @@ import {
     JWT_ACCESS_EXPIRY,
     JWT_REFRESH_EXPIRY,
 } from "../../config/jwt_config";
+import { AppError } from "../../utils/errors/AppError";
 
 export class TokenService implements ITokenService {
     signAccessToken(payload: ITokenPayload): string {
@@ -22,7 +23,7 @@ export class TokenService implements ITokenService {
         try {
             return jwt.verify(token, JWT_ACCESS_SECRET) as ITokenPayload;
         } catch {
-            throw new Error("Invalid or expired access token.");
+            throw new AppError("Invalid or expired access token.", 401);
         }
     }
 
@@ -30,7 +31,7 @@ export class TokenService implements ITokenService {
         try {
             return jwt.verify(token, JWT_REFRESH_SECRET) as ITokenPayload;
         } catch {
-            throw new Error("Invalid or expired refresh token.");
+            throw new AppError("Invalid or expired refresh token.", 401);
         }
     }
 }

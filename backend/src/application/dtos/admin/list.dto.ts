@@ -3,9 +3,14 @@ export interface PagedResultDTO<T> { items: T[]; total: number; page: number; to
 
 export interface VendorRowDTO {
     id: string; shopName: string; ownerName: string; email: string; phone: string;
-    city: string; rating: number; status: string; verificationStatus: string;
+    city: string; rating: number; status: boolean; verificationStatus: string;
 }
 
 export interface UserRowDTO {
     id: string; name: string; email: string; phone: string | null; isVerified: boolean; status: "ACTIVE" | "BLOCKED";
+}
+
+export interface UpdateStatusDTO {
+    userId: string;
+    status: boolean;
 }

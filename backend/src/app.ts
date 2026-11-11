@@ -1,5 +1,5 @@
 import express from "express";
-import cookieParser from "cookie-parser";
+import cookieParser from "cookie-parser"; // middleware for accessing cookie from browser request.
 import cors from "cors";
 import { errorHandler } from "./presentation/middlewares/errorHandler";
 import { adminRouter } from "./presentation/web/routes/adminRoutes";

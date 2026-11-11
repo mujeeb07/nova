@@ -7,14 +7,19 @@ export class ListUsersUseCase {
 
     async execute(q: ListQueryDTO): Promise<PagedResultDTO<UserRowDTO>> {
         const filter: Record<string, any> = {};
-        if (q.status === "ACTIVE") filter.status = true;
-        if (q.status === "BLOCKED") filter.status = false;
+        if (q.status){ 
+            q.search === "true" ?
+            filter.status = true :
+            filter.status = false ;
+        }
+
         if (q.search) { 
             const rx = new RegExp(escapeRegex(q.search), "i"); 
             filter.$or = [{ name: rx }, { email: rx }]; 
         }
 
         const { items, total} = await this._userRepository.findPaginated(filter, q.page, q.limit);
+        
         return {
             items: items.map((u) => ({
                 id: u.id, 
@@ -26,7 +31,7 @@ export class ListUsersUseCase {
             })),
             total,
             page: q.page,
-            totalPages: Math.ceil(total/ q.limit)
+            totalPages: Math.ceil(total / q.limit)
         }
     }
 }

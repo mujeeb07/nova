@@ -1,11 +1,10 @@
-// application/use_cases/admin/invitations/AcceptInvitationUseCase.ts
 import { IAdminRepository } from "../../../../domain/repositories/admin/IAdminRepository";
 import { IAdminInvitationStore } from "../../../../domain/repositories/admin/superAdmin/IAdminInvitationStore";
 import { IPasswordService } from "../../../services/IPasswordService";
 import { AcceptInvitationInputDTO, AcceptInvitationOutputDTO } from "../../../dtos/admin/superAdmin/invitation.dto";
-import { ROLE, STATUS } from "../../../../domain/entities/admins/IAdmin";
-import { BadRequestError, ConflictError, NotFoundError } from "../../../../utils/errors";
+import { ROLE } from "../../../../domain/entities/admins/IAdmin";
 import { INVALID_INVITE_MESSAGE } from "./ValidateInvitationUseCase";
+import { AppError } from "../../../../utils/errors/AppError";
 
 export class AcceptInvitationUseCase {
     constructor(
@@ -17,19 +16,19 @@ export class AcceptInvitationUseCase {
     async execute(input: AcceptInvitationInputDTO): Promise<AcceptInvitationOutputDTO> {
         const { token, password, confirmPassword } = input;
 
-        if (!token || typeof token !== "string") throw new NotFoundError(INVALID_INVITE_MESSAGE);
-        if (!password || password.length < 8) throw new BadRequestError("Password must be at least 8 characters");
-        if (password !== confirmPassword) throw new BadRequestError("Passwords do not match");
+        if (!token || typeof token !== "string") throw new AppError(INVALID_INVITE_MESSAGE, 400);
+        if (!password || password.length < 8) throw new AppError("Password must be at least 8 characters", 400);
+        if (password !== confirmPassword) throw new AppError("Passwords do not match", 400);
 
         // Atomic claim: only one concurrent request can ever receive the invitation.
         const invitation = await this._store.claim(token);
         if (!invitation || new Date(invitation.expiresAt) <= new Date()) {
-            throw new NotFoundError(INVALID_INVITE_MESSAGE);
+            throw new AppError(INVALID_INVITE_MESSAGE, 400);
         }
 
         try {
             if (await this._adminRepository.findByEmail(invitation.email)) {
-                throw new ConflictError("An admin with this email already exists");
+                throw new AppError("An admin with this email already exists", 409);
             }
 
             const passwordHash = await this._passwordService.hash(password);
@@ -41,12 +40,11 @@ export class AcceptInvitationUseCase {
                 passwordHash,
                 role: ROLE.ADMIN,
                 permissions: invitation.permissions,
-                status: STATUS.ACTIVE,
+                status: true,
                 lastLoginAt: null,
             });
         } catch (err: any) {
-            if (err instanceof ConflictError) throw err;                        // invitation stays consumed
-            if (err?.code === 11000) throw new ConflictError("An admin with this email already exists");
+            if (err?.code === 11000) throw new AppError("An admin with this email already exists", 409);
             await this._store.restore(token, invitation).catch(() => undefined); // transient failure: let them retry
             throw err;
         }

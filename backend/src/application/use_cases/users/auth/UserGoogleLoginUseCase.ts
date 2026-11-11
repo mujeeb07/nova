@@ -1,5 +1,5 @@
 import { IUserRepository } from "../../../../domain/repositories/users/IUserRepository";
-import { UnauthorizedError } from "../../../../utils/errors";
+import { AppError } from "../../../../utils/errors/AppError";
 import { IGoogleAuthService } from "../../../services/IGoogleAuthService";
 import { ITokenService } from "../../../services/ITokenService";
 
@@ -25,7 +25,7 @@ export class UserGoogleLoginUseCase {
             });
         } else {
             if (user.googleId && user.googleId !== profile.googleId) {
-                throw new UnauthorizedError("This email is linked to a different Google account");
+                throw new AppError("This email is linked to a different Google account", 400);
             }
             if (!user.googleId || !user.isVerified) {
                 user = await this._userRepository.update(user.id, {
@@ -35,7 +35,7 @@ export class UserGoogleLoginUseCase {
             }
         }
 
-        if (!user.status) throw new UnauthorizedError("Your account has been blocked");
+        if (!user.status) throw new AppError("Your account has been blocked", 400);
 
         const accessToken = this._tokenService.signAccessToken({ accountId: user.id, role: "user" });
         const refreshToken = this._tokenService.signRefreshToken({ accountId: user.id, role: "user" });

@@ -9,4 +9,5 @@ export interface IBaseRepository<TDomain> {
     page: number,
     limit: number
   ): Promise<{ items: TDomain[]; total: number }>
+  updateStatus(id: string, status: boolean): Promise<TDomain | null>;
 }

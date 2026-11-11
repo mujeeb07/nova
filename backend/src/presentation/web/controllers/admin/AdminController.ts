@@ -1,18 +1,21 @@
 import { Request, Response } from "express";
 import { IAdminLoginUseCase } from "../../../../application/interfaces/admin/IAdminUseCase";
-
 import { asyncHandlor } from "../../../../utils/errors/asyncHandlor";
 import { sendSuccess } from "../../../../utils/apiResponse";
-import { BadRequestError } from "../../../../utils/errors";
 import { COOKIE_CONFIG } from "../../../../config/cookie_config";
+import { AppError } from "../../../../utils/errors/AppError";
 
 export class AuthController {
-    constructor(private _loginAdminUsecase: IAdminLoginUseCase){}
+    constructor(private _loginAdminUsecase: IAdminLoginUseCase){};
+
     login = asyncHandlor(async (req: Request, res: Response) => {
+
         const { email, password } = req.body;
-        if(!email || !password) throw new BadRequestError("All fields are required");
+
+        if(!email || !password) throw new AppError("All fields are required", 400);
 
         const result = await this._loginAdminUsecase.execute({ email: email, password: password });
+
         res
         .cookie("accessToken", result.accessToken, {
             httpOnly: COOKIE_CONFIG.HTTP_ONLY,
@@ -30,8 +33,6 @@ export class AuthController {
         });
         sendSuccess(res, result, "Login Successful");
     });
-
-
 }
 
 

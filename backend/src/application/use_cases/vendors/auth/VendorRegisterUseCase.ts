@@ -6,6 +6,7 @@ import { IPasswordService } from "../../../services/IPasswordService";
 import { generateOtp } from "../../../../utils/generateOtp";
 import { OTP_CONFIG } from "../../../../config/otp_config";
 import { queueEmail } from "../../../../infrastructure/queues/emailQueue";
+import { AppError } from "../../../../utils/errors/AppError";
 
 
 export class VendorRegisterUseCase implements IVendorRegisterUseCase {
@@ -17,12 +18,12 @@ export class VendorRegisterUseCase implements IVendorRegisterUseCase {
 
     async execute(input: VendorRegisterInputDTO): Promise<VendorRegisterOutputDTO> {
         const { email, ownerName, password, phone, shopName } = input;
-        if(!password) throw new Error("Password is required");
-        if(!shopName) throw new Error("Shop name is required");
+        if(!password) throw new AppError("Password is required", 400);
+        if(!shopName) throw new AppError("Shop name is required", 400);
 
         const existing = await this._vendorRepository.findByEmail(email);
 
-        if (existing) throw new Error("Vendor already exists. Please login.");
+        if (existing) throw new AppError("Vendor already exists. Please login.", 409);
 
         const hashed = await this._passwordService.hash(password);
         const otp = generateOtp();
@@ -41,7 +42,7 @@ export class VendorRegisterUseCase implements IVendorRegisterUseCase {
         try {
             queueEmail({ email, otp });
         } catch (error) {
-            throw new Error(`Failed to send OTP email: ${(error as Error).message}`);
+            throw new AppError(`Failed to send OTP email: ${(error as Error).message}`, 500);
         }
         
         return { email, phone, otpExpiresAt }

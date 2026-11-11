@@ -3,8 +3,7 @@ import type { IUserLoginUseCase } from "../../../interfaces/users/IUserUseCase";
 import type { IPasswordService } from "../../../services/IPasswordService";
 import type { ITokenService } from "../../../services/ITokenService";
 import type { UserLoginInputDTO, UserLoginOutputDTO } from "../../../dtos/users/user.dto";
-import { UnauthorizedError, ForbiddenError } from "../../../../utils/errors";
-
+import { AppError } from "../../../../utils/errors/AppError";
 export class LoginUserUseCase implements IUserLoginUseCase {
     constructor(
         private readonly _userRepository: IUserRepository,
@@ -15,13 +14,13 @@ export class LoginUserUseCase implements IUserLoginUseCase {
     async execute(input: UserLoginInputDTO): Promise<UserLoginOutputDTO> {
         const user = await this._userRepository.findByEmail(input.email.toLowerCase().trim());
 
-        if (!user || !user.passwordHash) throw new UnauthorizedError("Invalid email or password");
+        if (!user || !user.passwordHash) throw new AppError("Invalid email or password", 401);
 
         const isMatch = await this._passwordService.compare(input.password, user.passwordHash);
-        if (!isMatch) throw new UnauthorizedError("Invalid email or password");
+        if (!isMatch) throw new AppError("Invalid email or password", 401);
 
-        if (!user.isVerified) throw new ForbiddenError("Please verify your email first");
-        if (!user.status) throw new ForbiddenError("Your account has been blocked");
+        if (!user.isVerified) throw new AppError("Please verify your email first", 403);
+        if (!user.status) throw new AppError("Your account has been blocked. Contact support", 403);
 
         const accessToken = this._tokenService.signAccessToken({ accountId: user.id, role: "user" });
         const refreshToken = this._tokenService.signRefreshToken({ accountId: user.id, role: "user" });

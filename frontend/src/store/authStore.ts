@@ -14,18 +14,19 @@ interface AuthState {
 export const useAuthStore = create<AuthState>((set) => ({
     session: null,
     isChecking: true,
-    setSession: (data, role) =>{
+    setSession: (data, role) => {
         const account = data.admin ?? data.user ?? data.vendor;
-        console.log(account)
-    set({
-        session: account
-            ? {
-                  role,
-                  accountId: account.id,
-                  name: account.name ?? account.shopName ?? "",
-              }
-            : null,
-    });},
+        console.log("Session data:",account)
+        set({
+            session: account
+                ? {
+                    role,
+                    accountId: account.id,
+                    name: account.name ?? account.shopName ?? "",
+                }
+                : null,
+        });
+    },
     clearSession: () => set({ session: null }),
     setChecking: (v) => set({ isChecking: v }),
 }));

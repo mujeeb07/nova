@@ -66,7 +66,7 @@ export const VendorsLandingPage: React.FC = () => {
             </p>
             <div className="pt-2">
               <button className="bg-[#00685D] hover:bg-[#00554c] text-white font-semibold text-xs px-8 py-3 rounded-lg shadow-xs transition-colors">
-                Get Started
+                Start Store Setup
               </button>
             </div>
           </div>

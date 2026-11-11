@@ -21,7 +21,6 @@ import VendorsLandingPage from './pages/vendor/VendorsLandingPage';
 import { SuperAdminLoginPage } from './pages/admin/super_admin/SuperAdminLoginPage';
 import { DashboardLayout } from './features/dashboard/components/DashboardLayout';
 import { dashboardConfigs } from './config/dashboardConfig';
-import { SuperAdminOverviewPage } from './pages/admin/super_admin/OverviewPage';
 import { PlaceholderPage } from './pages/shared/PlaceholderPage';
 import UsersPage from './pages/admin/UsersPage';
 import VendorsPage from './pages/admin/VendorsPage';

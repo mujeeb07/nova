@@ -1,7 +1,6 @@
-
 import { randomBytes } from "crypto";
-import { UnauthorizedError } from "../../../../utils/errors";
 import type { IKeyValueRepository } from "../../../../domain/repositories/key_value/IOtpRepository";
+import { AppError } from "../../../../utils/errors/AppError";
 
 const RESET_TOKEN_TTL_SECONDS = 600;
 
@@ -16,7 +15,7 @@ export class VerifyForgotPasswordOtpUseCase {
         const otpKey = `${this._cachePrefix}:otp:${email}`;
 
         const stored = await this._keyValueService.get(otpKey);
-        if (!stored || stored !== otp) throw new UnauthorizedError("Invalid or expired OTP");
+        if (!stored || stored !== otp) throw new AppError("Invalid or expired OTP", 401);
 
         await this._keyValueService.del(otpKey);
 

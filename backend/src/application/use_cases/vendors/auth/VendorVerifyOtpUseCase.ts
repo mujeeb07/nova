@@ -4,6 +4,7 @@ import type { IVendorVerifyOtpUseCase } from "../../../interfaces/vendors/IVendo
 import type { VendorVerifyOtpInputDTO, VendorVerifyOtpOutputDTO } from "../../../dtos/vendors/vendor.dto";
 import type { IKeyValueRepository } from "../../../../domain/repositories/key_value/IOtpRepository";
 import { ITokenService } from "../../../services/ITokenService";
+import { AppError } from "../../../../utils/errors/AppError";
 
 export class VendorVerifyOtpUseCase implements IVendorVerifyOtpUseCase {
     constructor(
@@ -19,15 +20,15 @@ export class VendorVerifyOtpUseCase implements IVendorVerifyOtpUseCase {
         const cacheKey = `pending:register:vendor:${email}`;
 
         const cachedData = await this._keyValueService.get(cacheKey);
-        if(!cachedData) throw new Error("Invalid or Expired OTP");
+        if(!cachedData) throw new AppError("Invalid or Expired OTP", 400);
 
         const pending = await JSON.parse(cachedData);
-        if(pending.otp !== otp) throw new Error("Invalid or Expired OTP");
+        if(pending.otp !== otp) throw new AppError("Invalid or Expired OTP", 400);
 
         const existing = await this._vendorRepository.findByEmail(email);
         if(existing) {
             await this._keyValueService.del(cacheKey);
-            throw new Error("An account with this email already exists. Please login.");
+            throw new AppError("An account with this email already exists. Please login.", 409);
         }
 
         const vendor = await this._vendorRepository.create({

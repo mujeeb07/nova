@@ -5,8 +5,8 @@ import type { IKeyValueRepository } from "../../../../domain/repositories/key_va
 import { IPasswordService } from "../../../services/IPasswordService";
 import { generateOtp } from "../../../../utils/generateOtp";
 import { OTP_CONFIG } from "../../../../config/otp_config";
-import { BadRequestError, ConflictError } from "../../../../utils/errors";
 import { queueEmail } from "../../../../infrastructure/queues/emailQueue";
+import { AppError } from "../../../../utils/errors/AppError";
 
 export class UserRegisterUseCase implements IUserRegisterUseCase {
     constructor(
@@ -16,18 +16,18 @@ export class UserRegisterUseCase implements IUserRegisterUseCase {
     ) {};
 
     async execute({ name, email, password }: UserRegisterInputDTO ): Promise<void> {
-        if(!name || !email || !password) throw new BadRequestError("All fields are required");
+        if(!name || !email || !password) throw new AppError("All fields are required", 400);
 
         const existing = await this._userRepository.findByEmail(email);
 
-        if(existing?.status) throw new ConflictError("conflict, user already exist. please login");
+        if(existing?.status) throw new AppError("conflict, user already exist. please login", 409);
 
         const hashed = await this._passwordService.hash(password); 
         const otp = generateOtp();
         const TTL_SECONDS = Math.floor(OTP_CONFIG.EXPIRY_MS / 1000);
 
         const pendingUserData = { name, email, password: hashed };
-        console.log("user data redis:",pendingUserData)
+        
         // saving the user metadata into redis.
         await this._keyValueService.set(
             `otp:register:user:${email}`,
@@ -38,7 +38,7 @@ export class UserRegisterUseCase implements IUserRegisterUseCase {
         try {
             await queueEmail({email, otp});
         } catch (error: unknown) {
-            throw new Error("OTP email failed");
+            throw new Error("OTP email failed", error as any);
         }
     }
 }

@@ -35,6 +35,7 @@ const adminForgotPasswordController = new ForgotPasswordController(
 )
 
 adminRouter.post("/login", adminController.login);
+
 adminRouter.get("/me", authenticateSuperAdmin, async (req, res) => {
     const admin = await adminRepository.findById(req.accountId!);
     if (!admin) {

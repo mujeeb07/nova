@@ -5,8 +5,7 @@ import { connectRedis } from "./infrastructure/db/config/redis_config";
 import "./infrastructure/workers/emailWorker";
 import { startAdminInviteWorker } from "./infrastructure/workers/adminInviteWorker";
 import { invitationStore} from "./presentation/web/routes/adminInvitationRoutes";
-import { connection } from "./infrastructure/config/config.queue";
-import { sendInvitationEmail } from "./infrastructure/services/InviteAdminService";
+
 
 
 const PORT = process.env.PORT || 5000;
@@ -16,7 +15,6 @@ async function startServer() {
     try {
         await MongooseDatabase.connect(DB_URI);
         await connectRedis();
-        startAdminInviteWorker( invitationStore, sendInvitationEmail);
         app.listen(PORT, () => {
             console.log(`server is running on http://localhost:${PORT}`);
         })

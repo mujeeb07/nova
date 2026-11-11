@@ -1,7 +1,8 @@
 import { BaseRepository } from "../shared/BaseRepository";
 import { IAdminRepository } from "../../../domain/repositories/admin/IAdminRepository";
-import { IAdmin, ROLE, STATUS } from "../../../domain/entities/admins/IAdmin";
+import { IAdmin, ROLE } from "../../../domain/entities/admins/IAdmin";
 import { IAdminDocument, AdminModel } from "./model/adminModel";
+import { AppError } from "../../../utils/errors/AppError";
 
 export class AdminRepository 
     extends BaseRepository< IAdmin, IAdminDocument> 
@@ -32,8 +33,10 @@ export class AdminRepository
         return docs.map((d) => this.mapper(d));
     }
 
-    async updateStatus(id: string, status: STATUS): Promise<void> {
-        await this.model.updateOne({ id: id }, { $set: { status} });
+    async updateStatus(id: string, status: boolean): Promise<IAdmin | null> {
+        const doc = await this.model.findByIdAndUpdate(id, { $set: { status}}, {new: true});
+        if(!doc) throw new AppError("update Status failed: admin data not found", 404);
+        return doc;
     }
 
     async updateLastLogin(id: string): Promise<void> {
@@ -49,6 +52,5 @@ export class AdminRepository
         const r = await this.model.updateOne({ _id: accountId }, { $set: { passwordHash } });
         if (r.matchedCount === 0) throw new Error("Account not found while updating password");
     }
-
 
 }

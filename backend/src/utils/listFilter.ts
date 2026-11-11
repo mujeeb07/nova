@@ -9,3 +9,10 @@ export function parseListQuery(q: any): ListQueryDTO {
     const limit = Math.min(50, Math.max(1, Number(q.limit) || 10));
     return { page, limit, search: q.search?.toString().trim() || undefined, status: q.status?.toString() };
 }
+
+
+const EMAIL_RX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+export function isValidEmail(email: string): boolean {
+    return EMAIL_RX.test(email);
+}
