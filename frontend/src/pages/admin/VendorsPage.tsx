@@ -6,6 +6,7 @@ import { StatusBadge } from "../../features/dashboard/components/StatusBadge";
 import { useAdminList } from "../../features/dashboard/hooks/useAdminList";
 import { ListStatusControl } from "../../features/dashboard/components/ListStatusControl";
 import { useToggleVendorStatus } from "../../features/dashboard/hooks/useToggleVendorStatus";
+import { ConfirmModal } from "../../features/dashboard/components/ConfirmModal";
 
 interface VendorRow {
     id: string; 
@@ -47,12 +48,23 @@ const STATUS_OPTIONS = [
     { value: "rejected", label: "Rejected" },
 ];
 
+type SortOption = "shopName" | "email";
+const SORT_OPTIONS: { value: SortOption; label: string }[] = [
+  { value: "shopName", label: "By Shop Name" },
+  { value: "email", label: "By Email" },
+];
+
 export default function VendorsPage() {
     const [page, setPage] = useState(1);
     const [search, setSearch] = useState("");
     const [status, setStatus] = useState("");
     const [loadingMap, setLoadingMap] = useState<Record<string, boolean>>({});
-    const { data, isLoading, refetch } = useAdminList<VendorRow>("vendors", { page, search, status });
+    const [sort, setSort] = useState<SortOption>("shopName");
+    const [order, setOrder] = useState<"asc" | "desc">("asc");
+    const [pendingAction, setPendingAction] = useState<{ vendor: VendorRow, nextState: boolean} | null>(null);
+
+    const { data, isLoading, refetch } = useAdminList<VendorRow>("vendors", { page, search, status, sort, order });
+
     const { mutateAsync: toggleVendorStatus } = useToggleVendorStatus();
     
     const handleToggleStatus = async (vendorId: string, nextStatus: boolean): Promise<void> => {
@@ -73,6 +85,12 @@ export default function VendorsPage() {
             }));
         }
     };
+
+    const handleConfirmToggle = async () => {
+        if(!pendingAction) return;
+        await handleToggleStatus(pendingAction.vendor.id, pendingAction.nextState);
+        setPendingAction(null);
+    }
 
     const columns: Column<VendorRow>[] = [
         { 
@@ -116,9 +134,7 @@ export default function VendorsPage() {
                     activeLabel="Block"
                     inactiveLabel="Unblock"
                     isLoading={loadingMap[v.id] || false}
-                    onChange={(nextStatus) => 
-                        handleToggleStatus(v.id, nextStatus)
-                    }
+                    onChange={(nextStatus) => setPendingAction({ vendor: v, nextState: nextStatus})}
                 />
             )
         }
@@ -126,17 +142,18 @@ export default function VendorsPage() {
 
     return (
         <>
-            <PageHeader 
-                title="Vendors" 
-                subtitle="Manage vendors across the NOVA marketplace." 
-            />
-
+            <PageHeader title="Vendors" subtitle="Manage vendors across the NOVA marketplace."/>
             <ListToolbar 
                 search={search} 
                 onSearch={(v) => { setSearch(v); setPage(1); }}
                 status={status} 
                 onStatus={(v) => { setStatus(v); setPage(1); }} 
                 statusOptions={STATUS_OPTIONS} 
+                sort={sort}
+                onSort={(v) => {setSort(v); setPage(1)}}
+                sortOptions={SORT_OPTIONS}
+                order={order}
+                onSortOrder={(v) => {setOrder(v); setPage(1); } }
             />
 
             <DataTable 
@@ -148,6 +165,20 @@ export default function VendorsPage() {
                 totalPages={data?.totalPages ?? 1} 
                 total={data?.total ?? 0} 
                 onPageChange={setPage} 
+            />
+            <ConfirmModal
+                isOpen={pendingAction !== null}
+                title={pendingAction?.nextState ? "Unblock Vendor" : "Block Vendor"}
+                message={
+                    pendingAction
+                        ? `Are you sure you want to ${pendingAction.nextState ? "unblock" : "block"} ${pendingAction.vendor.shopName}?`
+                        : ""
+                }
+                confirmLabel={pendingAction?.nextState ? "Yes, Unblock" : "Yes, Block"}
+                tone={pendingAction?.nextState ? "primary" : "danger"}
+                isLoading={pendingAction ? loadingMap[pendingAction.vendor.id] || false : false}
+                onCancel={() => setPendingAction(null)}
+                onConfirm={handleConfirmToggle}
             />
         </>
     );

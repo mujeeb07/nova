@@ -7,7 +7,8 @@ export interface IBaseRepository<TDomain> {
   findPaginated(
     filter: Record<string, any>,
     page: number,
-    limit: number
+    limit: number,
+    sort?: Record<string, 1 | -1>,
   ): Promise<{ items: TDomain[]; total: number }>
   updateStatus(id: string, status: boolean): Promise<TDomain | null>;
 }

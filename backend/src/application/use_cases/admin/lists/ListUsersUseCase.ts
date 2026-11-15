@@ -7,10 +7,9 @@ export class ListUsersUseCase {
 
     async execute(q: ListQueryDTO): Promise<PagedResultDTO<UserRowDTO>> {
         const filter: Record<string, any> = {};
+
         if (q.status){ 
-            q.search === "true" ?
-            filter.status = true :
-            filter.status = false ;
+            filter.status = q.status === "true";
         }
 
         if (q.search) { 
@@ -18,7 +17,15 @@ export class ListUsersUseCase {
             filter.$or = [{ name: rx }, { email: rx }]; 
         }
 
-        const { items, total} = await this._userRepository.findPaginated(filter, q.page, q.limit);
+        const dir: 1 | -1 = q.order === "desc" ? -1 : 1;
+        const sort: Record<string, 1 | -1> = q.sort === "email" ? { email: dir} : { name: dir};
+        
+        const { items, total} = await this._userRepository.findPaginated(
+            filter, 
+            q.page, 
+            q.limit, 
+            sort
+        );
         
         return {
             items: items.map((u) => ({

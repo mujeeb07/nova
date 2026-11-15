@@ -5,7 +5,7 @@ export function createAuthApi(basePath: string) {
         login: (data: { email: string; password: string }) =>
             apiClient.post(`${basePath}/login`, data).then((res) => res.data),
 
-        googleLogin:(data: {googleAccessToken: string}) => 
+        googleLogin:(data: { googleAccessToken: string }) => 
             apiClient.post(`${basePath}/google`, data).then((res) => res.data),
 
         register: (data: Record<string, string>) =>

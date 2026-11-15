@@ -29,16 +29,25 @@ export class BaseRepository<TDomain, TDbDoc> implements IBaseRepository<TDomain>
     return this.mapper(updatedDoc);
   }
 
-  async findPaginated(filter: Record<string, any>, page: number, limit: number): Promise<{ items: TDomain[]; total: number; }> {
+  async findPaginated(filter: Record<string, any>, page: number, limit: number, sort: Record<string, -1 | 1> = { createdAt: -1}): Promise<{ items: TDomain[]; total: number; }> {
     const [docs, total] = await Promise.all([
-      this.model.find(filter).sort({ createdAt: -1 }).skip((page - 1) * limit).limit(limit).lean(),
-      this.model.countDocuments(filter)
+      this.model.find(filter).sort(sort).skip((page - 1) * limit).limit(limit).lean(),
+      this.model.countDocuments(filter).exec(),
     ]);
-    return { items: docs.map((d) => this.mapper(d)), total }
+    return { 
+      items: docs.map((d) => this.mapper(d)), 
+      total 
+    }
   }
 
   async findByEmail(email: string): Promise<TDomain | null> {
     const doc = await this.model.findOne({ email: email });
+    if(!doc) return null;
+    return this.mapper(doc);
+  }
+
+  async updateStatus(id: string, status: boolean): Promise<TDomain | null> {
+    const doc = await this.model.findByIdAndUpdate(id, {$set: {status: status }}, { new: true});
     if(!doc) return null;
     return this.mapper(doc);
   }

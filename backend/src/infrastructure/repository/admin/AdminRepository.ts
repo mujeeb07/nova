@@ -34,9 +34,9 @@ export class AdminRepository
     }
 
     async updateStatus(id: string, status: boolean): Promise<IAdmin | null> {
-        const doc = await this.model.findByIdAndUpdate(id, { $set: { status}}, {new: true});
+        const doc = await this.model.findByIdAndUpdate(id, { status }, {new: true});
         if(!doc) throw new AppError("update Status failed: admin data not found", 404);
-        return doc;
+        return this.mapper(doc);
     }
 
     async updateLastLogin(id: string): Promise<void> {
@@ -50,7 +50,8 @@ export class AdminRepository
 
     async updatePasswordHash(accountId: string, passwordHash: string): Promise<void> {
         const r = await this.model.updateOne({ _id: accountId }, { $set: { passwordHash } });
-        if (r.matchedCount === 0) throw new Error("Account not found while updating password");
+        if (r.matchedCount === 0) throw new AppError("Account not found while updating password", 404);
     }
+
 
 }

@@ -6,6 +6,8 @@ import { StatusBadge } from "../../features/dashboard/components/StatusBadge";
 import { useAdminList } from "../../features/dashboard/hooks/useAdminList";
 import { ListStatusControl } from "../../features/dashboard/components/ListStatusControl";
 import { useToggleUserStatus } from "../../features/dashboard/hooks/useToggleUserStatus";
+import { ConfirmModal } from "../../features/dashboard/components/ConfirmModal";
+
 
 interface UserRow {
     id: string;
@@ -21,13 +23,25 @@ const STATUS_OPTIONS = [
     { value: "false", label: "Blocked" },
 ];
 
+type SortOption = "name" | "email";
+
+const SORT_OPTIONS: { value: SortOption; label: string }[] = [
+    { value: "name", label: "By Name" },
+    { value: "email", label: "By Email" },
+]
+
+
 export default function UsersPage() {
     const [page, setPage] = useState(1);
     const [search, setSearch] = useState("");
     const [status, setStatus] = useState("");
     const [loadingMap, setLoadingMap] = useState<Record<string, boolean>>({});
+    const [sort, setSort] = useState<SortOption>("name");
+    const [order, setOrder] = useState<"asc" | "desc">("asc");
+    const [pendingAction, setPendingAction] = useState<{ user: UserRow; nextState: boolean; } | null>(null);
 
-    const { data, isLoading, refetch } = useAdminList<UserRow>("users", { page, search, status });
+
+    const { data, isLoading, refetch } = useAdminList<UserRow>("users", { page, search, status, sort, order });
 
     const { mutateAsync: toggleStatus } = useToggleUserStatus();
 
@@ -46,6 +60,14 @@ export default function UsersPage() {
             setLoadingMap((prev) => ({ ...prev, [userId]: false }));
         }
     };
+
+    const handleConfirmToggle = async () => {
+        if(!pendingAction) return;
+        const { user, nextState } = pendingAction;
+
+        await handleToggleStatus(user.id, nextState);
+        setPendingAction(null);
+    }
 
     const columns: Column<UserRow>[] = [
         {
@@ -80,7 +102,7 @@ export default function UsersPage() {
                     activeLabel="Block"
                     inactiveLabel="Unblock"
                     isLoading={loadingMap[u.id] || false}
-                    onChange={(nextStatus) => handleToggleStatus(u.id, nextStatus)}
+                    onChange={(nextStatus) => setPendingAction({ user:u, nextState: nextStatus })}
                 />
             ),
         },
@@ -95,6 +117,11 @@ export default function UsersPage() {
                 status={status}
                 onStatus={(v) => { setStatus(v); setPage(1); }}
                 statusOptions={STATUS_OPTIONS}
+                sort={sort}
+                onSort={(v) => { setSort(v); setPage(1)}}
+                sortOptions={SORT_OPTIONS}
+                order={order}
+                onSortOrder={(v) => { setOrder(v); setPage(1) }}
             />
             <DataTable
                 columns={columns}
@@ -105,6 +132,20 @@ export default function UsersPage() {
                 totalPages={data?.totalPages ?? 1}
                 total={data?.total ?? 0}
                 onPageChange={setPage}
+            />
+            <ConfirmModal
+                isOpen={ pendingAction !== null}
+                title={pendingAction?.nextState ? "Unblock User" : "Block User"}
+                message={
+                    pendingAction 
+                        ? `Are you sure want to ${pendingAction.nextState ? "unblock" : "block"} ${pendingAction.user.name} (${pendingAction.user.email})?`
+                        : ""
+                }
+                confirmLabel={ pendingAction?.nextState ? "Yes, Unblock" : "Yes, Block"}
+                tone={pendingAction?.nextState ? "primary" : "danger"}
+                isLoading={pendingAction ? loadingMap[pendingAction.user.id] || false : false}
+                onCancel={() => setPendingAction(null)}
+                onConfirm={handleConfirmToggle}
             />
         </>
     );
