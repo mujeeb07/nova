@@ -3,10 +3,10 @@ import { IAdminInvitationStore } from "../../../../domain/repositories/admin/sup
 import { IInviteTokenGenerator } from "../../../services/IInviteTokenGenerator";
 import { IAdminInviteMailQueue } from "../../../services/IAdminInviteMailQueue";
 import { InviteAdminInputDTO, InviteAdminOutputDTO } from "../../../dtos/admin/superAdmin/invitation.dto"
-import { PERMISSIONS, ROLE } from "../../../../domain/entities/admins/IAdmin";
 import { INVITE_CONFIG } from "../../../../config/invite_config";
 import { isValidEmail } from "../../../../utils/listFilter";
 import { AppError } from "../../../../utils/errors/AppError";
+import { PERMISSIONS, ROLE } from "../../../../domain/entities/admins/Admin";
 
 export class InviteAdminUseCase {
     constructor(
@@ -31,6 +31,7 @@ export class InviteAdminUseCase {
         }
 
         if (await this._adminRepository.findByEmail(email)) {
+            console.log("email::::::::::", email)
             throw new AppError("An admin with this email already exists", 409);
         }
 
@@ -51,6 +52,7 @@ export class InviteAdminUseCase {
             await this._mailQueue.enqueue({ email, token });
         } catch {
             await this._store.revoke(token).catch(() => undefined);
+            throw new AppError("Failed queue invitation email. Please try again", 500)
         }
         
         return { email, expiresAt: invitation.expiresAt, emailStatus: "queued" };

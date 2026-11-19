@@ -24,6 +24,9 @@ import { dashboardConfigs } from './config/dashboardConfig';
 import { PlaceholderPage } from './pages/shared/PlaceholderPage';
 import UsersPage from './pages/admin/UsersPage';
 import VendorsPage from './pages/admin/VendorsPage';
+import { SetAdminPasswordForm } from './pages/admin/SetAdminPasswordForm';
+import { AdminSetPasswordPage } from './pages/admin/AdminSetPasswordPage';
+import { AdminLoginPage } from './pages/admin/AdminLoginPage';
 
 function App() {
   useSessionBootstrap()
@@ -71,6 +74,10 @@ function App() {
       <Route element={<ProtectedRoute role="vendor" loginPath="/vendor/login" />}>
         <Route path="/vendor/home" element={<VendorsLandingPage />}/>
       </Route>
+
+      {/* Invited Admin Routes */}
+      <Route path="/admin/set-password" element={<AdminSetPasswordPage />} />
+      <Route path="/admin/login" element={<AdminLoginPage />} />
     </Routes>
   )
 }

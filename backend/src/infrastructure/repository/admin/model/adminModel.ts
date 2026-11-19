@@ -1,7 +1,8 @@
 import mongoose, { Schema,Types } from "mongoose";
-import { IAdmin , ROLE } from "../../../../domain/entities/admins/IAdmin";
+import { AdminProps, ROLE } from "../../../../domain/entities/admins/Admin";
 
-export interface IAdminDocument extends Omit<IAdmin,"id">{
+
+export interface IAdminDocument extends Omit<AdminProps,"id">{
      _id: Types.ObjectId;
 }
 

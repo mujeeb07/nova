@@ -58,7 +58,7 @@ adminRouter.get("/me", authenticateSuperAdmin, async (req, res) => {
 adminRouter.post("/forgot-password", adminForgotPasswordController.sendOtp);
 adminRouter.post("/forgot-password/verify", adminForgotPasswordController.verifyOtp);
 adminRouter.post("/forgot-password/create", adminForgotPasswordController.createPassword);
-
+//http://localhost:5000/api/v1/auth/admin/invitations/validate
 const invitationLimiter = rateLimit({ windowMs: 15 * 60 * 1000, limit: 10, standardHeaders: true, legacyHeaders: false });
 adminRouter.post("/invitations/validate", invitationLimiter, invitationController.validate);
 adminRouter.post("/invitations/accept", invitationLimiter, invitationController.accept);

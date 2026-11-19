@@ -25,8 +25,10 @@ router.patch("/vendors/:vendorId/status", authenticateSuperAdmin, controller.upd
 router.get("/users", authenticateSuperAdmin, controller.users);
 router.patch("/users/:userId/status", authenticateSuperAdmin, controller.updateUserStatus);
 
-
+// /api/v1/super-admin/admins/verify
 const inviteLimiter = rateLimit({ windowMs: 60 * 60 * 1000, limit: 10, standardHeaders: true, legacyHeaders: false });
 router.post("/admins/invite", authenticateSuperAdmin, inviteLimiter, invitationController.invite);
+router.get("/admins/verify", authenticateSuperAdmin, invitationController.validate);
+router.post("admins/accept", authenticateSuperAdmin, invitationController.accept);
 
 export { router as adminManagementRouter }

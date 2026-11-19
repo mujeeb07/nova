@@ -1,4 +1,3 @@
-import Redis from "ioredis";
 import { RedisAdminInvitationStore } from "../../../infrastructure/repository/redis/RedisAdminInvitationStore";
 import { NanoIdTokenGenerator } from "../../../infrastructure/services/NanoIdTokenGenerator";
 import { AdminInviteMailQueue } from "../../../infrastructure/queues/AdminInviteMailQueue";

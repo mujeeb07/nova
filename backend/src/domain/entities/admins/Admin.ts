@@ -1,5 +1,16 @@
-import { ROLE, PERMISSIONS } from "./IAdmin";
 import { AppError } from "../../../utils/errors/AppError";
+
+
+export enum ROLE {
+    ADMIN = "admin",
+    SUPER_ADMIN = "super_admin",
+}
+
+export enum PERMISSIONS {
+    CUSTOMER_SUPPORT = "CUSTOMER_SUPPORT",
+    DELIVERY_PARTNER_SUPPORT = "DELIVERY_PARTNER_SUPPORT",
+    VENDOR_SUPPORT = "VENDOR_SUPPORT",
+}
 
 export interface AdminProps {
     id: string;

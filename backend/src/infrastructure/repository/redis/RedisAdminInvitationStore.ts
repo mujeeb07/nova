@@ -23,7 +23,7 @@ return v`;
 
 export class RedisAdminInvitationStore implements IAdminInvitationStore {
     constructor(private readonly _redis: Redis) {}
-
+    
     async create(token: string, invitation: IAdminInvitation, ttlSeconds: number): Promise<boolean> {
         const key = tokenKey(token);
         const res = await this._redis.eval(

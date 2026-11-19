@@ -1,4 +1,4 @@
-import { PERMISSIONS } from "../../../../domain/entities/admins/IAdmin";
+import { PERMISSIONS } from "../../../../domain/entities/admins/Admin";
 
 export interface InviteAdminInputDTO { inviterId: string; email: string; permissions: PERMISSIONS[] }
 export interface InviteAdminOutputDTO { email: string; expiresAt: string; emailStatus: "queued" }

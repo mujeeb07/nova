@@ -1,37 +1,33 @@
-import { Worker, type ConnectionOptions } from "bullmq";
-import { ADMIN_INVITE_QUEUE, MAIL_ATTEMPTS } from "../queues/AdminInviteMailQueue";
-import { IAdminInvitationStore } from "../../domain/repositories/admin/superAdmin/IAdminInvitationStore";
-import { INVITE_CONFIG } from "../../config/invite_config";
-import { logger } from "../logger/logger";
+import { Worker, Job } from "bullmq";
 import { connection } from "../config/config.queue";
+import { ADMIN_INVITE_QUEUE } from "../queues/AdminInviteMailQueue";
 import { sendInvitationAdminEmail } from "../services/InviteAdminService";
 
-export function startAdminInviteWorker(
-    store: IAdminInvitationStore,
-) {
-    const worker = new Worker<{ email: string; token: string }>(
+interface AdminInviteJobData {
+    email: string;
+    token: string;
+}
+
+export const createAdminInviteMailWorker = (adminPortalUrl: string): Worker<AdminInviteJobData> => {
+    const worker = new Worker<AdminInviteJobData>(
         ADMIN_INVITE_QUEUE,
-        async (job) => {
+        async (job: Job<AdminInviteJobData>) => {
             const { email, token } = job.data;
-
-            // Expired, revoked or already accepted: nothing to send.
-            if (!(await store.find(token))) return;
-
-            const link = `${INVITE_CONFIG.FRONTEND_URL}${INVITE_CONFIG.ACCEPT_PATH}?token=${encodeURIComponent(token)}`;
-            await sendInvitationAdminEmail(email, link);
+            const inviteLink = `${adminPortalUrl}/admin/set-password?token=${token}`;
+            await sendInvitationAdminEmail(email, inviteLink);
         },
-        { connection, concurrency: 5 }
+        {
+            connection: connection.duplicate(),
+            concurrency: 5,
+        }
     );
 
-    worker.on("failed", async (job, err) => {
-        if (!job) return;
-        // Never log job.data: it holds the token.
-        logger.warn({ jobId: job.id, attempt: job.attemptsMade, reason: err.message }, "Invite email attempt failed");
-        if (job.attemptsMade >= MAIL_ATTEMPTS) {
-            await store.revoke(job.data.token).catch(() => undefined);
-            logger.error({ jobId: job.id }, "Invite email failed permanently, invitation revoked");
-        }
+    worker.on("failed", (job, err) => {
+        console.error(
+            `❌ [AdminInviteWorker] Attempt ${job?.attemptsMade} failed for ${job?.data.email}:`,
+            err.message
+        );
     });
 
     return worker;
-}
+};

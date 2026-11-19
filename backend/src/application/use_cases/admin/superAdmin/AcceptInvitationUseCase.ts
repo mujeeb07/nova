@@ -2,9 +2,10 @@ import { IAdminRepository } from "../../../../domain/repositories/admin/IAdminRe
 import { IAdminInvitationStore } from "../../../../domain/repositories/admin/superAdmin/IAdminInvitationStore";
 import { IPasswordService } from "../../../services/IPasswordService";
 import { AcceptInvitationInputDTO, AcceptInvitationOutputDTO } from "../../../dtos/admin/superAdmin/invitation.dto";
-import { ROLE } from "../../../../domain/entities/admins/IAdmin";
+
 import { INVALID_INVITE_MESSAGE } from "./ValidateInvitationUseCase";
 import { AppError } from "../../../../utils/errors/AppError";
+import { ROLE } from "../../../../domain/entities/admins/Admin";
 
 export class AcceptInvitationUseCase {
     constructor(
@@ -25,9 +26,10 @@ export class AcceptInvitationUseCase {
         if (!invitation || new Date(invitation.expiresAt) <= new Date()) {
             throw new AppError(INVALID_INVITE_MESSAGE, 400);
         }
-
+        console.log("Invitation:", invitation);
         try {
             if (await this._adminRepository.findByEmail(invitation.email)) {
+                console.log("pari:", invitation.email)
                 throw new AppError("An admin with this email already exists", 409);
             }
 
@@ -44,6 +46,7 @@ export class AcceptInvitationUseCase {
                 lastLoginAt: null,
             });
         } catch (err: any) {
+            console.log("Error:", err)
             if (err?.code === 11000) throw new AppError("An admin with this email already exists", 409);
             await this._store.restore(token, invitation).catch(() => undefined); // transient failure: let them retry
             throw err;

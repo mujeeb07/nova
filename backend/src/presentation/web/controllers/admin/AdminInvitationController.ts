@@ -17,6 +17,7 @@ export class AdminInvitationController {
     invite = asyncHandlor(async (req: Request, res: Response) => {
         if (!req.accountId) throw new AppError("Not logged in", 401);
         const { email, permissions } = req.body;
+        console.log("Mail and permissions:", email, permissions);
         if (!email || !Array.isArray(permissions)) throw new AppError("Email and permissions are required", 400);
 
         const result = await this._invite.execute({ inviterId: req.accountId, email, permissions });

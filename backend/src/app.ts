@@ -15,6 +15,10 @@ app.use(cors({
     credentials: true,
 }));
 app.use(express.json());
+app.use((req, _res, next) => {
+  console.log(req.method, req.originalUrl);
+  next();
+});
 app.use("/api/v1/auth", authRouter);
 app.use("/auth", authRouter);
 app.use("/api/v1/auth/admin", adminRouter);

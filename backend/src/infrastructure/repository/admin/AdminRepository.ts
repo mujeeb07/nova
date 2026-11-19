@@ -1,15 +1,16 @@
 import { BaseRepository } from "../shared/BaseRepository";
 import { IAdminRepository } from "../../../domain/repositories/admin/IAdminRepository";
-import { IAdmin, ROLE } from "../../../domain/entities/admins/IAdmin";
+
 import { IAdminDocument, AdminModel } from "./model/adminModel";
 import { AppError } from "../../../utils/errors/AppError";
+import { AdminProps, ROLE } from "../../../domain/entities/admins/Admin";
 
 export class AdminRepository 
-    extends BaseRepository< IAdmin, IAdminDocument> 
+    extends BaseRepository< AdminProps, IAdminDocument> 
     implements IAdminRepository
 {
     constructor() {
-        super(AdminModel, (raw: any): IAdmin => ({
+        super(AdminModel, (raw: any): AdminProps => ({
             id: raw._id.toString(),
             name: raw.name,
             email: raw.email,
@@ -23,17 +24,17 @@ export class AdminRepository
         }));
     }
 
-    async findByEmail(email: string): Promise<IAdmin | null> {
+    async findByEmail(email: string): Promise<AdminProps | null> {
         const doc = await this.model.findOne({ email: email.toLowerCase().trim() }).select('+passwordHash').lean();
         return doc ? this.mapper(doc) : null;
     }
 
-    async findAllbyRole(role: ROLE): Promise<IAdmin[]> {
+    async findAllbyRole(role: ROLE): Promise<AdminProps[]> {
         const docs = await this.model.find({ role });
         return docs.map((d) => this.mapper(d));
     }
 
-    async updateStatus(id: string, status: boolean): Promise<IAdmin | null> {
+    async updateStatus(id: string, status: boolean): Promise<AdminProps | null> {
         const doc = await this.model.findByIdAndUpdate(id, { status }, {new: true});
         if(!doc) throw new AppError("update Status failed: admin data not found", 404);
         return this.mapper(doc);
@@ -52,6 +53,4 @@ export class AdminRepository
         const r = await this.model.updateOne({ _id: accountId }, { $set: { passwordHash } });
         if (r.matchedCount === 0) throw new AppError("Account not found while updating password", 404);
     }
-
-
 }

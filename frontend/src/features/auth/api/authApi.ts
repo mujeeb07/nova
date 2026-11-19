@@ -22,5 +22,9 @@ export function createAuthApi(basePath: string) {
 
         createNewPassword: (data: { email: string; resetToken: string; newPassword: string; confirmPassword: string }) =>
             apiClient.post(`${basePath}/forgot-password/create`, data).then((res) => res.data),
+
+        // setting password for new admins.
+        setPassword:(data:{ token: string; password: string; confirmPassword: string; }) => 
+            apiClient.post(`${basePath}/admin/set-password`, data).then((res) => res.data),
     };
 }

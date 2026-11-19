@@ -17,5 +17,6 @@ export const connection = new IORedis({
   port: Number(parsedUrl.port) || 6379,
   username: parsedUrl.username || undefined,
   password: parsedUrl.password || undefined,
+  tls: parsedUrl.protocol === "rediss:" ? {} : undefined,
   maxRetriesPerRequest: null,
 });

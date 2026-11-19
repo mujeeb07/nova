@@ -1,3 +1,8 @@
+export interface AdminInviteMailPayload {
+    email: string;
+    token: string;
+}
+
 export interface IAdminInviteMailQueue {
-    enqueue(payload: { email: string; token: string }): Promise<void>;
+    enqueue(payload: AdminInviteMailPayload): Promise<void>;
 }
