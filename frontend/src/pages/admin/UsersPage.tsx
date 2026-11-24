@@ -5,7 +5,7 @@ import { ListToolbar } from "../../features/dashboard/components/ListToolbar";
 import { StatusBadge } from "../../features/dashboard/components/StatusBadge";
 import { useAdminList } from "../../features/dashboard/hooks/useAdminList";
 import { ListStatusControl } from "../../features/dashboard/components/ListStatusControl";
-import { useToggleUserStatus } from "../../features/dashboard/hooks/useToggleUserStatus";
+import { useToggleStatus } from "../../features/dashboard/hooks/useToggleStatus";
 import { ConfirmModal } from "../../features/dashboard/components/ConfirmModal";
 
 
@@ -43,21 +43,21 @@ export default function UsersPage() {
 
     const { data, isLoading, refetch } = useAdminList<UserRow>("users", { page, search, status, sort, order });
 
-    const { mutateAsync: toggleStatus } = useToggleUserStatus();
+    const { mutateAsync: toggleStatus } = useToggleStatus("user");
 
     const handleToggleStatus = async (
-        userId: string, 
+        id: string, 
         nextState: boolean 
     ): Promise <void> => {
-        setLoadingMap((prev) => ({ ...prev, [userId]: true }));
+        setLoadingMap((prev) => ({ ...prev, [id]: true }));
 
         try {
-            await toggleStatus({userId, isActive: nextState});
+            await toggleStatus({id, isActive: nextState});
             await refetch(); 
         } catch (error) {
             console.error("Failed to update user status:", error);
         } finally {
-            setLoadingMap((prev) => ({ ...prev, [userId]: false }));
+            setLoadingMap((prev) => ({ ...prev, [id]: false }));
         }
     };
 

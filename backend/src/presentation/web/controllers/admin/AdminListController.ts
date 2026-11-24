@@ -7,6 +7,7 @@ import { parseListQuery } from "../../../../utils/listFilter";
 import { UpdateUserStatusUseCase } from "../../../../application/use_cases/admin/lists/UpdateUserStatusUseCase";
 import { UpdateStatusDTO } from "../../../../application/dtos/admin/list.dto";
 import { UpdateVendorStatusUseCase } from "../../../../application/use_cases/admin/lists/UpdateVendorStatusUseCase";
+import { ReviewModel } from "../../../../infrastructure/repository/review/model/reviewModel";
 
 export class AdminListController {
     constructor(
@@ -38,5 +39,5 @@ export class AdminListController {
         }
         // console.log(`Update vendor DTO: ${dto}`)
         sendSuccess(res, await this._updateVendorStatus.execute(dto), "OK")
-    })
+    });
 }

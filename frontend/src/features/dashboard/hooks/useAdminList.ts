@@ -9,7 +9,7 @@ export interface ListParams {
     order?: "desc" | "asc"
 }
 
-export function useAdminList<T>(resource: "vendors" | "users", p: ListParams) {
+export function useAdminList<T>(resource: string, p: ListParams) {
     return useQuery({
         queryKey: [resource, p],
         queryFn: async () =>

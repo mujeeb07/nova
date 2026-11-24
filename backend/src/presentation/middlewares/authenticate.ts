@@ -25,7 +25,6 @@ export function authenticate(tokenService: ITokenService, allowedRoles?: Account
 
         req.accountId = payload.accountId;
         req.role = normalizedRole;
-        // console.log("user id:", req.params?.userId, "status:", req.body?.status);
         next();
     }
 }

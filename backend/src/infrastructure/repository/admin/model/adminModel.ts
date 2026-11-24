@@ -11,6 +11,7 @@ const adminSchema = new Schema<IAdminDocument>({
     email: { type: String, required: true, unique: true, lowercase: true, trim: true },
     passwordHash: { type: String, required: true, select: false },
     role: { type: String, enum: Object.values(ROLE), required: true, default: ROLE.SUPER_ADMIN },
+    permissions: { type: [String], default: [] },
     status: { type: Boolean, default: false, required: true },
     lastLoginAt: { type: Date, default: null }
 }, {timestamps: true});

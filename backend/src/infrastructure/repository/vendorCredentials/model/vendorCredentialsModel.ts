@@ -8,7 +8,7 @@ export interface IVendorCredentialsDocument extends Omit<IVendorCredentials, "ve
 
 const vendorCredentialSchema  = new Schema<IVendorCredentialsDocument>(
     {
-        vendorId: { type: Schema.Types.ObjectId, ref: "Vendor", required: true , unique: true },
+        vendorId: { type: Schema.Types.ObjectId, ref: "vendor", required: true , unique: true },
         passwordHash: { type: String, required: true },
         verifiedAt: { type: Date, default: null }
     },

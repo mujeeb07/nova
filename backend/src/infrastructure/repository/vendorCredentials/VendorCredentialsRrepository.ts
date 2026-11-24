@@ -32,10 +32,6 @@ implements IVendorCredentialsRepository, IPasswordResettable {
         return vendor ? vendor._id.toString() : null;
     }
 
-    // async verifyForgotPasswordOtp(otp: string): Promise<string | null> {
-    //     return null;
-    // }
-
     // reset-password.
     async updatePasswordHash(vendorId: string, passwordHash: string): Promise<void> {
         await VendorCredentialsModel.updateOne({ vendorId }, { $set: { passwordHash } });

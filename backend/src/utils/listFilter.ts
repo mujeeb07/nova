@@ -9,7 +9,7 @@ export function parseListQuery(query: Record<string, any>): ListQueryDTO {
         page: Math.max(1, Number(query.page) || 1),
         limit: Math.max(1, Number(query.limit) || 10), 
         search: typeof query.search === "string" && query.search.trim() ? query.search.trim() : undefined,
-        status: typeof query.status === "string" && query.status.trim() ? query.status.trim() : undefined,
+        verificationStatus: typeof query.status === "string" && query.status.trim() ? query.status.trim() : undefined,
         sort: typeof query.sort === "string" && query.sort.trim() ? query.sort.trim() : undefined,
         order: query.order === "asc" ? "asc" : "desc",
     };

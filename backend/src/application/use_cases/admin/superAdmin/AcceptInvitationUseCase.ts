@@ -41,7 +41,7 @@ export class AcceptInvitationUseCase {
                 email: invitation.email,
                 passwordHash,
                 role: ROLE.ADMIN,
-                permissions: invitation.permissions,
+                permissions: [...invitation.permissions],
                 status: true,
                 lastLoginAt: null,
             });

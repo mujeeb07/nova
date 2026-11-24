@@ -2,7 +2,7 @@ export interface ListQueryDTO {
     page: number; 
     limit: number; 
     search?: string; 
-    status?: string; 
+    verificationStatus?: string; 
     sort?: string; 
     order?: "asc" | "desc"
 }
@@ -39,3 +39,4 @@ export interface UpdateStatusDTO {
     userId: string;
     status: boolean;
 }
+

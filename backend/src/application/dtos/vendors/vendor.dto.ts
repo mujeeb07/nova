@@ -1,4 +1,11 @@
-import { IAddress, IBankDetails, IWorkingHours, VendorStatus, VerificationStatus } from "../../../domain/entities/vendors/IVendor";
+import { PricingModel } from "../../../domain/entities/services/IService";
+import { 
+    IAddress, 
+    IBankDetails, 
+    IWorkingHours, 
+    VendorStatus, 
+    VerificationStatus 
+} from "../../../domain/entities/vendors/IVendor";
 
 // summary.
 export interface VendorSummaryDTO {
@@ -15,7 +22,7 @@ export interface AuthTokensDTO {
     refreshToken: string;
 }
 
-// register input.
+// register.
 export interface VendorRegisterInputDTO {
     shopName: string;
     ownerName: string;
@@ -24,70 +31,108 @@ export interface VendorRegisterInputDTO {
     password: string;
 }
 
-// register output.
 export interface VendorRegisterOutputDTO {
     email: string;
     phone: string;
     otpExpiresAt: Date;
 }
 
-// verify otp input.
+// verify otp.
 export interface VendorVerifyOtpInputDTO {
     email: string;
     otp: string;
 }
 
-// verify otp output.
 export interface VendorVerifyOtpOutputDTO extends AuthTokensDTO {
     vendor: VendorSummaryDTO;
 }
 
-// login input.
+// resend otp.
+export interface VendorResendOtpInputDTO {
+    email: string;
+}
+
+// login.
 export interface VendorLoginInputDTO {
     email: string;
     password: string;
 }
 
-// login output.
 export interface VendorLoginOutputDTO extends AuthTokensDTO {
     vendor: VendorSummaryDTO;
     status: VendorStatus;
     verificationStatus: VerificationStatus;
-    accessToken: string;
-    refreshToken: string;
 }
 
-// forgot password input.
+// forgot / reset password.
 export interface VendorForgotPasswordInputDTO {
     email: string;
 }
 
-// reset password input.
 export interface VendorResetPasswordInputDTO {
     email: string;
     otp: string;
     newPassword: string;
 }
 
-// resend otp input.
-export interface VendorResendOtpInputDTO {
+// complete onboarding.
+export interface OnboardingServiceInputDTO {
+    name: string;
+    category: string;
+    pricingModel: PricingModel;
+    price: number;
+    estimatedHours: number;
+    tags?: string[];
+}
+
+export interface VendorCompleteOnboardingInputDTO {
+    vendorId: string;
+
+    // step-1 Business Profile.
+    shopName: string;
+    businessType: string;
+    phone: string;
     email: string;
-}
-
-// store setup input.
-export interface VendorStoreSetupInputDTO {
-    vendorId: string;
+    description?: string;
+    logoUrl?: string;
     shopImages: string[];
+
+    // step-2 Location setup.
     address: Omit<IAddress, "id">;
-    serviceIds: string[];
-    workingHours: IWorkingHours;
+
+    // step-3 Service setup.
+    services: OnboardingServiceInputDTO[];
+
+    // step-4 Capacity.
     dailyOrderCapacity: number;
+    dailyItemCapacity: number;
+    autoPauseWhenFull: boolean;
+
+    // step-5 Operating Hours.
+    workingHours: IWorkingHours;
+
+    // step-6 Payout Details.
     bankDetails: IBankDetails;
-    documentUrls: string[];
+
+    verificationDocuments?: string[];
 }
 
-// store setup output.
-export interface VendorStoreSetupOutputDTO {
+export interface VendorCompleteOnboardingOutputDTO {
     vendorId: string;
+    shopName: string;
+    email: string;
     verificationStatus: "under_review";
+    submittedAt: Date;
+}
+
+// get profile.
+export interface VendorGetProfileInputDTO {
+    vendorId: string;
+}
+
+export interface VendorGetProfileOutputDTO {
+    vendor: VendorSummaryDTO;
+    status: VendorStatus;
+    verificationStatus: VerificationStatus;
+    rejectionReason: string | null;
 }

@@ -42,7 +42,7 @@ export class VendorVerifyOtpUseCase implements IVendorVerifyOtpUseCase {
             workingHours: null,
             dailyOrderCapacity: 0,
             currentSubscriptionId: null,
-            status: "pending",
+            status: true ,
             verificationStatus: "unsubmitted",
             verificationDocuments: [],
             rejectionReason: null,

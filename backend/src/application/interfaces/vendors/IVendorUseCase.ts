@@ -1,4 +1,5 @@
-import { 
+import { IUseCase } from "../IUseCase";
+import {
     VendorRegisterInputDTO,
     VendorRegisterOutputDTO,
     VendorVerifyOtpInputDTO,
@@ -8,40 +9,21 @@ import {
     VendorLoginOutputDTO,
     VendorForgotPasswordInputDTO,
     VendorResetPasswordInputDTO,
-    VendorStoreSetupInputDTO,
-    VendorStoreSetupOutputDTO,
+    VendorCompleteOnboardingInputDTO,
+    VendorCompleteOnboardingOutputDTO,
+    VendorGetProfileInputDTO,
+    VendorGetProfileOutputDTO,
 } from "../../dtos/vendors/vendor.dto";
 
-// register.
-export interface IVendorRegisterUseCase {
-    execute(input: VendorRegisterInputDTO): Promise<VendorRegisterOutputDTO>;
-}
+// auth
+export type IVendorRegisterUseCase       = IUseCase<VendorRegisterInputDTO, VendorRegisterOutputDTO>;
+export type IVendorVerifyOtpUseCase      = IUseCase<VendorVerifyOtpInputDTO, VendorVerifyOtpOutputDTO>;
+export type IVendorResendOtpUseCase      = IUseCase<VendorResendOtpInputDTO, void>;
+export type IVendorLoginUseCase          = IUseCase<VendorLoginInputDTO, VendorLoginOutputDTO>;
+export type IVendorForgotPasswordUseCase = IUseCase<VendorForgotPasswordInputDTO, void>;
+export type IVendorResetPasswordUseCase  = IUseCase<VendorResetPasswordInputDTO, void>;
 
-export interface IVendorVerifyOtpUseCase {
-    execute(input: VendorVerifyOtpInputDTO): Promise<VendorVerifyOtpOutputDTO>;
-}
+// onboarding / profile
+export type IVendorCompleteOnboardingUseCase = IUseCase<VendorCompleteOnboardingInputDTO, VendorCompleteOnboardingOutputDTO>;
+export type IVendorGetProfileUseCase         = IUseCase<VendorGetProfileInputDTO, VendorGetProfileOutputDTO>;
 
-// login.
-export interface IVendorLoginUseCase {
-    execute(input: VendorLoginInputDTO): Promise<VendorLoginOutputDTO>;
-}
-
-// forgot password.
-export interface IVendorForgotPasswordUseCase {
-    execute(input: VendorForgotPasswordInputDTO): Promise<void>;
-}
-
-// reset password.
-export interface IVendorResetPasswordUseCase {
-    execute(input: VendorResetPasswordInputDTO): Promise<void>;
-}
-
-// resend otp.
-export interface IVendorResendOtpUseCase {
-    execute(input: VendorResendOtpInputDTO): Promise<void>;
-}
-
-// store setup.
-export interface IVendorStoreSetupUseCase {
-    execute(input: VendorStoreSetupInputDTO): Promise<VendorStoreSetupOutputDTO>;
-}

@@ -48,7 +48,7 @@ export const dashboardConfigs = {
         theme: roleConfigs.admin.theme,
         logoutRedirect: "/admin/login",
         nav: [
-            { label: "Overview", path: "/super-admin/overview", icon: LayoutDashboard },
+            { label: "Overview", path: "/admin/overview", icon: LayoutDashboard },
 
         ]
     }

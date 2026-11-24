@@ -5,7 +5,7 @@ import { ListToolbar } from "../../features/dashboard/components/ListToolbar";
 import { StatusBadge } from "../../features/dashboard/components/StatusBadge";
 import { useAdminList } from "../../features/dashboard/hooks/useAdminList";
 import { ListStatusControl } from "../../features/dashboard/components/ListStatusControl";
-import { useToggleVendorStatus } from "../../features/dashboard/hooks/useToggleVendorStatus";
+import { useToggleStatus } from "../../features/dashboard/hooks/useToggleStatus";
 import { ConfirmModal } from "../../features/dashboard/components/ConfirmModal";
 
 interface VendorRow {
@@ -65,23 +65,23 @@ export default function VendorsPage() {
 
     const { data, isLoading, refetch } = useAdminList<VendorRow>("vendors", { page, search, status, sort, order });
 
-    const { mutateAsync: toggleVendorStatus } = useToggleVendorStatus();
+    const { mutateAsync: toggleVendorStatus } = useToggleStatus("vendor");
     
-    const handleToggleStatus = async (vendorId: string, nextStatus: boolean): Promise<void> => {
+    const handleToggleStatus = async (id: string, nextStatus: boolean): Promise<void> => {
         setLoadingMap((prev) => ({
             ...prev,
-            [vendorId]: true
+            [id]: true
         }));
 
         try{
-            await toggleVendorStatus({ vendorId, isActive: nextStatus });
+            await toggleVendorStatus({ id, isActive: nextStatus });
             await refetch();
         }catch(error) {
             console.error("Failed to udpate vendor status:",  error);
         } finally {
             setLoadingMap((prev) => ({ 
                 ...prev,
-                [vendorId]: false
+                [id]: false
             }));
         }
     };

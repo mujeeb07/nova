@@ -89,7 +89,7 @@ export const roleConfigs: Record<Role, RoleConfig> = {
         theme: { primary: "#524be3", primaryHover: "#433bc8", ring: "#6366f1", bg: "#f3f5fc" },
         layout: "centered",
         registerFields: [],
-        afterLoginRedirect: "/admin/overview",
+        afterLoginRedirect: "/admin/dashboard",
         afterRegisterRedirect: "",
     },
 

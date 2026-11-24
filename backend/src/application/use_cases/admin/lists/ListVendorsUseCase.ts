@@ -7,10 +7,10 @@ export class ListVendorsUseCase {
 
     async execute(q: ListQueryDTO): Promise<PagedResultDTO<VendorRowDTO>> {
         const filter: Record<string, any> = {};
-
-        if (q.status){ 
-            filter.status = q.search === "true"
+        if (q.verificationStatus){ 
+            filter.verificationStatus = q.verificationStatus
         }
+
         if (q.search) {
             const rx = new RegExp(escapeRegex(q.search), "i");
             filter.$or = [{ shopName: rx }, { ownerName: rx }, { email: rx }];

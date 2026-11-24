@@ -8,7 +8,7 @@ export class VendorPayoutAccountRepository implements IVendorPayoutAccountReposi
             vendorId: doc.vendorId.toString(),
             bankDetails: doc.bankDetails,
             commissionRate: doc.commissionRate,
-            pendingSettlementAmount: doc.pendingSettlementAmount
+            pendingSettlementAmount: doc.pendingSettlementAmount,
         };
     }
 
@@ -19,19 +19,19 @@ export class VendorPayoutAccountRepository implements IVendorPayoutAccountReposi
 
     async findByVendorId(vendorId: string): Promise<IVendorPayoutAccount | null> {
         const doc = await VendorPayoutAccountModel.findOne({ vendorId });
-        return doc ? this.toDomain(doc) : null
+        return doc ? this.toDomain(doc) : null;
     }
 
-    async upsert(vendorId: string, bankDetails: IBankDetails): Promise<IVendorPayoutAccount> {
-        const doc = await VendorPayoutAccountModel.findByIdAndUpdate(
+    async upsert(
+        vendorId: string,
+        bankDetails: IBankDetails,
+        defaultCommissionRate: number,
+    ): Promise<IVendorPayoutAccount> {
+        const doc = await VendorPayoutAccountModel.findOneAndUpdate(
             { vendorId },
-            {
-                $set: { bankDetails },
-                $setOnInsert: { commissionRate: 0.01, pendingSettlementAmount: 0 }
-            },
-            { new: true, upsert: true }
+            { $set: { bankDetails }, $setOnInsert: { commissionRate: defaultCommissionRate } },
+            { upsert: true, returnDocument: "after", runValidators: true },
         );
-
-        return this.toDomain(doc);
+        return this.toDomain(doc!);
     }
 }

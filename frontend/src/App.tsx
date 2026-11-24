@@ -24,9 +24,9 @@ import { dashboardConfigs } from './config/dashboardConfig';
 import { PlaceholderPage } from './pages/shared/PlaceholderPage';
 import UsersPage from './pages/admin/UsersPage';
 import VendorsPage from './pages/admin/VendorsPage';
-import { SetAdminPasswordForm } from './pages/admin/SetAdminPasswordForm';
 import { AdminSetPasswordPage } from './pages/admin/AdminSetPasswordPage';
 import { AdminLoginPage } from './pages/admin/AdminLoginPage';
+import AdminsPage from './pages/admin/super_admin/AdminsPage';
 
 function App() {
   useSessionBootstrap()
@@ -60,13 +60,14 @@ function App() {
           {dashboardConfigs.super_admin.nav
             .filter(
               (n) => 
-              // n.path !== "/super-admin/overview" && 
               n.path !== "/super-admin/vendors" &&
-              n.path !== "/super-admin/users"
+              n.path !== "/super-admin/users" &&
+              n.path !== "/super-admin/admins"
             )
             .map((n) => <Route key={n.path} path={n.path} element={<PlaceholderPage />} />)}
             <Route path="/super-admin/vendors" element={<VendorsPage/>}/>
             <Route path="/super-admin/users" element={<UsersPage/>}/>
+            <Route path="/super-admin/admins" element={<AdminsPage/>}/>
         </Route>
       </Route>
 
@@ -75,9 +76,15 @@ function App() {
         <Route path="/vendor/home" element={<VendorsLandingPage />}/>
       </Route>
 
-      {/* Invited Admin Routes */}
+      {/* -----ADMIN----- */}
       <Route path="/admin/set-password" element={<AdminSetPasswordPage />} />
       <Route path="/admin/login" element={<AdminLoginPage />} />
+      <Route element={<ProtectedRoute role="admin" loginPath="/admin/login" />}>
+        <Route element={<DashboardLayout config={dashboardConfigs.admin} />}>
+            <Route path="/admin/dashboard" element={<PlaceholderPage/>}/>
+            <Route path="/admin/overview" element={<PlaceholderPage/>}/>
+        </Route>
+      </Route>
     </Routes>
   )
 }

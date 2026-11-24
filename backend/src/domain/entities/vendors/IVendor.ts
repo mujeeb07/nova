@@ -7,7 +7,9 @@ export interface IAddress {
     id: string;
     label: string;
     street: string;
+    street2?: string;
     city: string;
+    district: string;
     state: string;
     zipCode: string;
     location: IGeoJSONPoint;
@@ -17,16 +19,22 @@ export type WeekDay =
     | "sunday" | "monday" | "tuesday" | "wednesday"
     | "thursday" | "friday" | "saturday";
 
+export interface IDailyWorkingHours {
+    day: WeekDay;
+    isOpen: boolean;
+    openTime: string;   // e.g. "09:00"
+    closeTime: string;  // e.g. "20:00"
+}
+
 export interface IWorkingHours {
-    openTime: string;   
-    closeTime: string;
-    workingDays: WeekDay[];
+    schedule: IDailyWorkingHours[];
+    specialClosures: Date[];
 }
 
 export type VendorStatus = boolean;
 export type VerificationStatus = "unsubmitted" | "under_review" | "verified" | "rejected";
 
-export type IRatingDistribution = Record< 1 | 2 | 3 | 4 | 5, number >;
+export type IRatingDistribution = Record<1 | 2 | 3 | 4 | 5, number>;
 
 export interface IVendorRatingSummary {
     average: number;
@@ -41,13 +49,18 @@ export interface IVendor {
     ownerName: string;
     email: string;
     phone: string;
+    businessType: string;
+    description?: string;
+    logoUrl?: string;
     shopImages: string[];
     addresses: IAddress[];
     serviceIds: string[];
     workingHours: IWorkingHours | null;
     dailyOrderCapacity: number;
+    dailyItemCapacity: number;
+    autoPauseWhenFull: boolean;
     currentSubscriptionId: string | null;
-    status: boolean;
+    status: VendorStatus;
     verificationStatus: VerificationStatus;
     verificationDocuments: string[];
     rejectionReason: string | null;
@@ -80,3 +93,5 @@ export interface IVendorPayoutAccount {
     commissionRate: number;
     pendingSettlementAmount: number;
 }
+
+
